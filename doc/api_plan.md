@@ -323,6 +323,7 @@ Because the DB enforces that clients cannot write to `ai_generation_requests` an
 
   ```json
   {
+    "ok": true,
     "generationId": "uuid",
     "reviewToken": "string",
     "proposals": [
@@ -341,6 +342,7 @@ Because the DB enforces that clients cannot write to `ai_generation_requests` an
 
   ```json
   {
+    "ok": false,
     "generationId": "uuid",
     "error": {
       "code": "AI_GENERATION_FAILED",
@@ -682,5 +684,5 @@ These endpoints are optional for MVP UI but useful for monitoring and verifying 
   - Limits reset at UTC midnight; expose `resetAt` to UI (PRD FR-020).
 
 - Search correctness:
-  - MVP uses `ILIKE` on `front/back` and respects pagination/sorting.
+  - MVP uses `ILIKE` on `front/back` and respects pagination/sorting`.
 

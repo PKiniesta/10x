@@ -51,11 +51,29 @@ export type PaginatedResponse<TItem> = {
 };
 
 /**
+ * Public API error codes (per `doc/api_plan.md`).
+ * Keep this in sync with the REST contract.
+ */
+export type ApiErrorCode =
+  | "AUTH_REQUIRED"
+  | "VALIDATION_ERROR"
+  | "INVALID_PAGINATION"
+  | "INVALID_SORT"
+  | "CARD_NOT_FOUND"
+  | "GENERATION_NOT_FOUND"
+  | "INVALID_REVIEW_TOKEN"
+  | "PROPOSAL_ALREADY_DECIDED"
+  | "DAILY_GENERATION_LIMIT_REACHED"
+  | "DAILY_AI_ACCEPT_LIMIT_REACHED"
+  | "AI_GENERATION_FAILED"
+  | "INTERNAL_ERROR";
+
+/**
  * Helper: consistent API error shape (per `doc/api_plan.md`).
  */
 export type ApiErrorDto = {
   error: {
-    code: string;
+    code: ApiErrorCode;
     message: string;
     details?: Record<string, unknown>;
   };
