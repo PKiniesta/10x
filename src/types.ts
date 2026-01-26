@@ -130,8 +130,18 @@ export type AiInlineLimitsDto = {
   resetAt: IsoDateTimeString;
 };
 
+
+export type AiProposalLogDto = {
+  generationId: AiProposalLogEntity["generation_id"];
+  proposalIndex: AiProposalLogEntity["proposal_index"];
+  accepted: AiProposalLogEntity["accepted"];
+  createdCardId: AiProposalLogEntity["created_card_id"];
+  createdAt: AiProposalLogEntity["created_at"];
+};
+
 /** Success response: start AI generation. */
 export type StartAiGenerationSuccessDto = {
+  ok: true;
   generationId: AiGenerationRequestEntity["generation_id"];
   reviewToken: string;
   proposals: AiCardProposalDto[];
@@ -140,6 +150,7 @@ export type StartAiGenerationSuccessDto = {
 
 /** Failure response: start AI generation (still returns `generationId` + limits). */
 export type StartAiGenerationFailureDto = {
+  ok: false;
   generationId: AiGenerationRequestEntity["generation_id"];
   error: ApiErrorDto["error"] & {
     details?: {
@@ -158,24 +169,15 @@ export type AcceptAiProposalCommand = Pick<CardEntity, "front" | "back"> & {
   reviewToken: string;
 };
 
-/**
- * Proposal log DTO returned by accept/reject.
- * Derived from `public.ai_proposal_logs`.
- */
-export type AiProposalLogDto = Pick<AiProposalLogEntity, "generation_id" | "proposal_index" | "accepted" | "created_card_id"> & {
-  generationId: AiProposalLogEntity["generation_id"];
-  proposalIndex: AiProposalLogEntity["proposal_index"];
-  createdCardId: AiProposalLogEntity["created_card_id"];
-  createdAt: AiProposalLogEntity["created_at"];
-};
-
 /** Response: accept proposal. */
 export type AcceptAiProposalResponseDto = {
   card: CardDto;
-  log: Omit<AiProposalLogDto, "generation_id" | "proposal_index" | "created_card_id"> & {
+  log: {
     generationId: AiProposalLogEntity["generation_id"];
     proposalIndex: AiProposalLogEntity["proposal_index"];
+    accepted: true;
     createdCardId: NonNullable<AiProposalLogEntity["created_card_id"]>;
+    createdAt: AiProposalLogEntity["created_at"];
   };
   limits: {
     aiAcceptedCardsRemaining: number;
