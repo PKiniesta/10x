@@ -1,5 +1,5 @@
 Stack technologiczny aplikacji
-Frontend - Astro z React dla komponentów interaktywnych:
+  Frontend - Astro z React dla komponentów interaktywnych:
 - Astro 5 pozwala na tworzenie szybkich, wydajnych stron i aplikacji z minimalną ilością JavaScript
 - React 19 zapewni interaktywność tam, gdzie jest potrzebna
 - TypeScript 5 dla statycznego typowania kodu i lepszego wsparcia IDE
