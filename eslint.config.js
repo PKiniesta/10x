@@ -31,6 +31,7 @@ const jsxA11yConfig = tseslint.config({
   },
   rules: {
     ...jsxA11y.flatConfigs.recommended.rules,
+    "@typescript-eslint/consistent-type-definitions": "off",
   },
 });
 

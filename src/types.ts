@@ -148,7 +148,6 @@ export type AiInlineLimitsDto = {
   resetAt: IsoDateTimeString;
 };
 
-
 export type AiProposalLogDto = {
   generationId: AiProposalLogEntity["generation_id"];
   proposalIndex: AiProposalLogEntity["proposal_index"];

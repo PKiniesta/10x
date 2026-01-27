@@ -10,12 +10,13 @@ The plan is based on:
 
 > Assumptions (explicit because some details aren’t fully specified in PRD):
 > 1. This API is implemented as Astro Server Endpoints under `src/pages/api/**`.
-> 2. Authentication uses Supabase Auth (email/password) and a session stored in cookies; endpoints read the user from `context.locals.supabase.auth.getUser()`.
+> 2. **MVP (temporary): authentication is not enforced yet.** Endpoints that need a user context use a server-side *mock user id*.
 > 3. The client cannot write to AI log tables directly due to RLS (per DB plan). Therefore, AI-related flows are implemented as server-side endpoints that use either:
 >    - Postgres RPC (SECURITY DEFINER), or
 >    - Supabase service role on the server.
 >    This plan describes the REST endpoints; the internal DB mechanism can be selected during implementation.
-> 4. We don’t persist the generated AI proposal *content* in the DB (per PRD/DB plan). The “review screen” therefore requires the client to keep proposals in memory, or the API needs an ephemeral token to re-fetch proposals. This plan proposes an **ephemeral review token** with short TTL.
+> 4. We don’t persist the generated AI proposal *content* in the DB (per PRD/DB plan). The “review screen” therefore requires the client to keep proposals in memory.
+>    The API includes a `reviewToken` field, but **in MVP it is just a random identifier (no signature, no verification)**.
 
 ---
 
@@ -307,7 +308,7 @@ Because the DB enforces that clients cannot write to `ai_generation_requests` an
   - Calls OpenRouter to generate card proposals.
   - On success: sets `status=success`, `generated_cards_count`.
   - On failure: sets `status=failure`, stores `error_code` + safe `error_message` (no user input).
-  - Returns proposals + a **review token**.
+  - Returns proposals + a `reviewToken` (MVP: random string).
 
 - **Query params:** none
 - **Request JSON:**
@@ -364,7 +365,6 @@ Because the DB enforces that clients cannot write to `ai_generation_requests` an
   - `201 Created` for success
   - `502 Bad Gateway` (or `500`) for upstream failure, but still with a logged request.
 - **Error codes:**
-  - `401 Unauthorized` (`AUTH_REQUIRED`)
   - `400 Bad Request` (`VALIDATION_ERROR`) when:
     - input length is out of range (DB constraint mirrors this via `input_length between 1000 and 10000`)
     - requested cards count out of range (DB: `requested_cards_count between 3 and 12`)
@@ -392,7 +392,7 @@ Because the DB enforces that clients cannot write to `ai_generation_requests` an
   ```
 
   Notes:
-  - `reviewToken` binds the request to a prior generation response (mitigates accepting arbitrary generation ids / indices).
+  - `reviewToken` is reserved for later security improvements.
   - `front/back` reflect “accept as-is” or “edit then accept” (PRD FR-018).
 
 - **Response JSON:**
@@ -425,9 +425,7 @@ Because the DB enforces that clients cannot write to `ai_generation_requests` an
 - **Success codes:**
   - `201 Created`
 - **Error codes:**
-  - `401 Unauthorized` (`AUTH_REQUIRED`)
   - `400 Bad Request` (`VALIDATION_ERROR`) for 200/500 length rules
-  - `401 Unauthorized` or `403 Forbidden` (`INVALID_REVIEW_TOKEN`) if token missing/expired
   - `404 Not Found` (`GENERATION_NOT_FOUND`) if generation doesn’t exist for user
   - `409 Conflict` (`PROPOSAL_ALREADY_DECIDED`) if already accepted/rejected and the API disallows changing decisions
   - `429 Too Many Requests` (`DAILY_AI_ACCEPT_LIMIT_REACHED`) when 20 accepted today (PRD FR-021)
@@ -466,8 +464,6 @@ Because the DB enforces that clients cannot write to `ai_generation_requests` an
 - **Success codes:**
   - `200 OK`
 - **Error codes:**
-  - `401 Unauthorized` (`AUTH_REQUIRED`)
-  - `401 Unauthorized` or `403 Forbidden` (`INVALID_REVIEW_TOKEN`)
   - `404 Not Found` (`GENERATION_NOT_FOUND`)
   - `409 Conflict` (`PROPOSAL_ALREADY_DECIDED`) if the API disallows changing decisions
 
@@ -685,4 +681,3 @@ These endpoints are optional for MVP UI but useful for monitoring and verifying 
 
 - Search correctness:
   - MVP uses `ILIKE` on `front/back` and respects pagination/sorting`.
-
