@@ -33,3 +33,11 @@ export const ListCardsQuerySchema = z
   .strict();
 
 export type ListCardsQueryInput = z.infer<typeof ListCardsQuerySchema>;
+
+// -----------------------------
+// Get card by id (GET /api/cards/{cardId})
+// -----------------------------
+
+export const CardIdSchema = z.string().uuid("cardId must be a valid UUID");
+
+export type CardIdInput = z.infer<typeof CardIdSchema>;

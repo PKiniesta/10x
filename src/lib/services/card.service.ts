@@ -88,6 +88,32 @@ export async function listCards(
 }
 
 /**
+ * Fetches a single card by id for the user.
+ * Returns `null` when not found (or belongs to another user).
+ */
+export async function getCardById(
+  supabase: SupabaseClient,
+  userId: string,
+  cardId: string
+): Promise<CardDto | null> {
+  if (!cardId) {
+    throw new Error("INVALID_CARD_ID");
+  }
+
+  const { data, error } = await supabase.from("cards").select("*").eq("id", cardId).eq("user_id", userId).maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  if (!data) {
+    return null;
+  }
+
+  return mapToCardDto(data as CardEntity);
+}
+
+/**
  * Maps DB entity to DTO.
  */
 export function mapToCardDto(entity: CardEntity): CardDto {
