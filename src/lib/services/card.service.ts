@@ -167,6 +167,33 @@ export async function updateCard(
 }
 
 /**
+ * Deletes a card for the user.
+ * Returns `true` when a row was deleted, otherwise `false` (not found or not owned by user).
+ */
+export async function deleteCard(supabase: SupabaseClient, userId: string, cardId: string): Promise<boolean> {
+  if (!userId) {
+    throw new Error("AUTH_REQUIRED");
+  }
+
+  if (!cardId) {
+    throw new Error("INVALID_CARD_ID");
+  }
+
+  // We need the deleted row count to distinguish between success vs not-found/not-owned.
+  const { error, count } = await supabase
+    .from("cards")
+    .delete({ count: "exact" })
+    .eq("id", cardId)
+    .eq("user_id", userId);
+
+  if (error) {
+    throw error;
+  }
+
+  return (count ?? 0) > 0;
+}
+
+/**
  * Maps DB entity to DTO.
  */
 export function mapToCardDto(entity: CardEntity): CardDto {

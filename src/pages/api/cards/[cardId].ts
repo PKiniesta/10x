@@ -1,8 +1,8 @@
 import type { APIContext } from "astro";
 
-import { getCardById, updateCard } from "@/lib/services/card.service";
+import { deleteCard, getCardById, updateCard } from "@/lib/services/card.service";
 import { CardIdSchema, UpdateCardSchema } from "@/lib/validation/cards";
-import type { ApiErrorDto } from "@/types";
+import type { ApiErrorDto, DeleteCardResponseDto } from "@/types";
 
 export const prerender = false;
 
@@ -119,6 +119,44 @@ export async function PATCH(context: APIContext): Promise<Response> {
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error("PATCH /api/cards/[cardId] failed:", err);
+    return apiError("INTERNAL_ERROR", "An unexpected error occurred.", 500);
+  }
+}
+
+export async function DELETE(context: APIContext): Promise<Response> {
+  // 1) Auth
+  const {
+    data: { user },
+    error: authError,
+  } = await context.locals.supabase.auth.getUser();
+
+  if (authError || !user) {
+    return apiError("AUTH_REQUIRED", "Authentication required.", 401);
+  }
+
+  // 2) Validate path param
+  const rawCardId = context.params.cardId;
+  const parsedCardId = CardIdSchema.safeParse(rawCardId);
+
+  if (!parsedCardId.success) {
+    return apiError("VALIDATION_ERROR", "Invalid cardId.", 400, {
+      issues: parsedCardId.error.issues.map((i) => ({ path: i.path, message: i.message })),
+    });
+  }
+
+  // 3) Logic
+  try {
+    const deleted = await deleteCard(context.locals.supabase, user.id, parsedCardId.data);
+
+    if (!deleted) {
+      return apiError("CARD_NOT_FOUND", "Card not found.", 404);
+    }
+
+    const body: DeleteCardResponseDto = { ok: true };
+    return jsonResponse(body, { status: 200 });
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error("DELETE /api/cards/[cardId] failed:", err);
     return apiError("INTERNAL_ERROR", "An unexpected error occurred.", 500);
   }
 }
