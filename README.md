@@ -72,7 +72,7 @@ The key value proposition includes:
 ### MVP Features
 - User accounts (email/password) and password reset.
 - Flashcards: manual creation, viewing, searching, editing, deletion.
-- AI: generating flashcard suggestions from pasted text (1000–10000 characters), with a parameter for the number of flashcards.
+- AI: generating flashcard suggestions from pasted text (1000–1000 characters), with a parameter for the number of flashcards.
 - Review flow: accept/reject per flashcard, with optional editing before acceptance.
 - Cost limits: 10 generation requests/day and 20 accepted AI flashcards/day per user.
 - Logging AI events to a dedicated database table to count KPIs.

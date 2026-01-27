@@ -56,7 +56,7 @@ create table if not exists public.ai_generation_requests (
   constraint ai_gen_req_generation_id_unique unique (generation_id),
 
   constraint ai_gen_req_input_length_check
-    check (input_length between 1000 and 10000),
+    check (input_length between 100 and 1000),
 
   constraint ai_gen_req_requested_cards_count_check
     check (requested_cards_count between 3 and 12),

@@ -13,7 +13,7 @@
 1.3 Zakres MVP (high-level)
 - Konta użytkowników (email/hasło) i reset hasła.
 - Fiszki: tworzenie manualne, przeglądanie, wyszukiwanie, edycja, usuwanie.
-- AI: generowanie propozycji fiszek z wklejanego tekstu (1000–10000 znaków), z parametrem liczby fiszek.
+- AI: generowanie propozycji fiszek z wklejanego tekstu (100–1000 znaków), z parametrem liczby fiszek.
 - Review flow: akceptacja/odrzucenie per fiszka, z opcjonalną edycją przed akceptacją.
 - Limity kosztowe: 10 żądań generowania/dzień i 20 zaakceptowanych fiszek AI/dzień na użytkownika.
 - Logowanie zdarzeń AI do dedykowanej tabeli w bazie danych, aby liczyć KPI.
@@ -102,8 +102,8 @@ FR-012 Usuwanie fiszki
 3.5 Generowanie fiszek przez AI
 FR-013 Wejście generowania
 - Użytkownik wkleja tekst (plain text).
-- Długość wejścia: 1000–10000 znaków.
-- System wyświetla licznik znaków i walidację (poniżej 1000 i powyżej 10000 generowanie jest zablokowane).
+- Długość wejścia: 100–1000 znaków.
+- System wyświetla licznik znaków i walidację (poniżej 100 i powyżej 1000 generowanie jest zablokowane).
 
 FR-014 Parametr liczby fiszek
 - Użytkownik wybiera „Ile fiszek wygenerować”.
@@ -311,7 +311,7 @@ Uwaga: wszystkie historyjki są zaprojektowane jako testowalne. Tam gdzie to kon
   Kryteria akceptacji:
   1. Pole przyjmuje plain text.
   2. System pokazuje licznik znaków.
-  3. Przy długości < 1000 lub > 10000 przycisk generowania jest nieaktywny i pokazuje powód.
+  3. Przy długości < 100 lub > 1000 przycisk generowania jest nieaktywny i pokazuje powód.
 
 - ID: US-014
   Tytuł: Wybór liczby fiszek do wygenerowania

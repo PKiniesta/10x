@@ -50,7 +50,7 @@ Log *każdego* żądania generowania (sukces i porażka liczą się do limitu 10
   - FK → `auth.users(id)`
 - `created_at timestamptz` **NOT NULL** DEFAULT `now()`
 - `input_length integer` **NOT NULL**
-  - CHECK: `input_length BETWEEN 1000 AND 10000`
+  - CHECK: `input_length BETWEEN 100 AND 1000`
 - `requested_cards_count integer` **NOT NULL**
   - CHECK: `requested_cards_count BETWEEN 3 AND 12`
 - `generated_cards_count integer` NULL

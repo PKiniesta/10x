@@ -69,7 +69,7 @@ The plan is based on:
 
   ```json
   {
-    "data": [/* items */],
+    "data": [],
     "page": 1,
     "pageSize": 20,
     "total": 123
@@ -303,7 +303,7 @@ Because the DB enforces that clients cannot write to `ai_generation_requests` an
 - **Method:** POST
 - **Path:** `/api/ai/generations`
 - **Description:**
-  - Validates input length (1000–10000) and requested card count (3–12).
+  - Validates input length (100–1000) and requested card count (3–12).
   - Enforces daily generation limit (10/day) and writes a row to `ai_generation_requests`.
   - Calls OpenRouter to generate card proposals.
   - On success: sets `status=success`, `generated_cards_count`.
@@ -366,7 +366,7 @@ Because the DB enforces that clients cannot write to `ai_generation_requests` an
   - `502 Bad Gateway` (or `500`) for upstream failure, but still with a logged request.
 - **Error codes:**
   - `400 Bad Request` (`VALIDATION_ERROR`) when:
-    - input length is out of range (DB constraint mirrors this via `input_length between 1000 and 10000`)
+    - input length is out of range (DB constraint mirrors this via `input_length between 100 and 1000`)
     - requested cards count out of range (DB: `requested_cards_count between 3 and 12`)
   - `429 Too Many Requests` (`DAILY_GENERATION_LIMIT_REACHED`) when user already logged 10 requests today (UTC).
 
@@ -620,7 +620,7 @@ These endpoints are optional for MVP UI but useful for monitoring and verifying 
 #### AI generation requests (`public.ai_generation_requests`)
 - `input_length`:
   - required
-  - 1000–10000 (`ai_gen_req_input_length_check`) (PRD FR-013)
+  - 100–1000 (`ai_gen_req_input_length_check`) (PRD FR-013)
 - `requested_cards_count`:
   - required
   - 3–12 (`ai_gen_req_requested_cards_count_check`) (PRD FR-014)

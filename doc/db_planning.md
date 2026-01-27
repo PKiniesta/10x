@@ -38,7 +38,7 @@
 - Lista fiszek sortowana po `created_at DESC` oraz stronicowanie 20–50 (FR-009).
 - Wyszukiwanie po `front/back` (FR-010) — w MVP realizowane prosto (ILIKE).
 - AI:
-    - generowanie z wejścia 1000–10000 znaków, parametr liczby fiszek 3–12 (domyślnie 8),
+    - generowanie z wejścia 100–1000 znaków, parametr liczby fiszek 3–12 (domyślnie 8),
     - review obowiązkowy, akceptacja/odrzucenie per propozycja,
     - brak przechowywania treści odrzuconych propozycji w DB (FR-019),
     - limity kosztowe: 10 requestów/dzień i 20 akceptów/dzień per user w UTC (FR-020),

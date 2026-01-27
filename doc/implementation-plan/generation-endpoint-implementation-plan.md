@@ -3,7 +3,7 @@
 - Endpoint: POST `/api/ai/generations` (Astro Server Endpoint).
 - Cel: uruchomienie generowania propozycji fiszek przez OpenRouter na podstawie długiego tekstu wejściowego.
 - Walidacja:
-  - `inputText` długość 1000–10000 znaków (w DB logujemy `input_length`).
+  - `inputText` długość 100–1000 znaków (w DB logujemy `input_length`).
   - `requestedCardsCount` 3–12.
 - Limity dzienne (UTC):
   - 10 żądań generowania/dzień/użytkownik (liczy się sukces i porażka).
@@ -50,7 +50,7 @@
 
 5) Plan walidacji danych wejściowych
 - Zod w endpointcie:
-  - `inputText.length` 1000–10000.
+  - `inputText.length` 100–1000.
   - `requestedCardsCount`: int 3–12.
 - Walidacja JSON:
   - obsłużyć brak/niepoprawny JSON: `400 VALIDATION_ERROR`.
@@ -110,7 +110,7 @@ Wymagane pola:
 
 Kontrakt:
 - `inputText`:
-  - długość **1000–10000** znaków (liczyć jako `inputText.length`)
+  - długość **100–1000** znaków (liczyć jako `inputText.length`)
 - `requestedCardsCount`:
   - liczba całkowita **3–12**
 

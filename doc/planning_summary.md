@@ -6,7 +6,7 @@
 4. Out of scope for MVP: advanced proprietary SRS (e.g., Anki/SuperMemo-grade), multi-format import (PDF/DOCX/etc.), sharing decks, integrations with other learning platforms, mobile apps (web only initially).
 5. Flashcard model: single simple type front/back (Basic Q/A). “Term + definition” is treated as the same front/back format (no separate types). Stored as text only.
 6. Manual creation constraints: front max 200 chars, back max 500 chars; one simple “New card” form with immediate validation and character counters.
-7. AI generation input: plain text only, length must be 1000–10000 characters.
+7. AI generation input: plain text only, length must be 100–1000 characters.
 8. AI generation output control: user provides “How many cards to generate” with a small range and a default value.
 9. AI review flow: paste -> AI generates -> review/approval step; user can edit before accepting; acceptance is per single card (no bulk).
 10. AI acceptance measurement: “Accept” and “Accept after edit” are counted the same; rejected proposals are not persisted.
@@ -35,7 +35,7 @@
     Flashcards CRUD: create (manual), read/list, update, delete.
     Manual create constraints: front <= 200, back <= 500, text only.
     AI flashcard generation:
-    Input: plain pasted text, 1000–10000 chars.
+    Input: plain pasted text, 100–1000 chars.
     User selects number of cards to generate (small bounded range, default).
     Output: proposed front/back cards.
     AI review/approval workflow:
@@ -64,7 +64,7 @@
 2. Manual flashcard creation
    As a student, I open “New card”, enter front/back within limits (200/500), and save to quickly add a card without AI.
 3. AI-assisted creation with review
-   As a student, I paste a Polish text (1000–10000 chars), choose how many cards to generate, run generation, then review proposals.
+   As a student, I paste a Polish text (100–1000 chars), choose how many cards to generate, run generation, then review proposals.
    For each proposal, I optionally edit and then accept to save it, or reject to discard.
 4. Manage existing flashcards
    As a student, I browse my cards (paginated, newest first), search by keywords across front/back, edit a card in a modal/separate view, or delete it.
