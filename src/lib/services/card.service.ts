@@ -69,7 +69,7 @@ export async function listCards(
     .range(from, to);
 
   if (params.q) {
-    const qEscaped = params.q.replaceAll("%", "\\%").replaceAll("_", "\\_");
+    const qEscaped = params.q.replaceAll("%", String.raw`\%`).replaceAll("_", String.raw`\_`);
     query = query.or(`front.ilike.%${qEscaped}%,back.ilike.%${qEscaped}%`);
   }
 
@@ -91,11 +91,11 @@ export async function listCards(
  * Fetches a single card by id for the user.
  * Returns `null` when not found (or belongs to another user).
  */
-export async function getCardById(
-  supabase: SupabaseClient,
-  userId: string,
-  cardId: string
-): Promise<CardDto | null> {
+export async function getCardById(supabase: SupabaseClient, userId: string, cardId: string): Promise<CardDto | null> {
+  if (!userId) {
+    throw new Error("AUTH_REQUIRED");
+  }
+
   if (!cardId) {
     throw new Error("INVALID_CARD_ID");
   }
@@ -110,7 +110,7 @@ export async function getCardById(
     return null;
   }
 
-  return mapToCardDto(data as CardEntity);
+  return mapToCardDto(data);
 }
 
 /**
