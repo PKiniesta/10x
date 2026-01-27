@@ -31,3 +31,9 @@ export const acceptAiProposalParamsSchema = z.object({
     z.number().int().min(0, "proposalIndex must be at least 0")
   ),
 });
+
+export const rejectAiProposalCommandSchema = z.object({
+  reviewToken: z.string({ required_error: "reviewToken is required" }),
+});
+
+export const rejectAiProposalParamsSchema = acceptAiProposalParamsSchema;

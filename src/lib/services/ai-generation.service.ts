@@ -3,6 +3,7 @@ import type {
   AcceptAiProposalResponseDto,
   AiInlineLimitsDto,
   CardDto,
+  RejectAiProposalResponseDto,
   StartAiGenerationFailureDto,
   StartAiGenerationSuccessDto,
 } from "../../types";
@@ -42,6 +43,11 @@ type StartAiGenerationServiceResult =
 export type AcceptAiProposalServiceResult =
   | { kind: "success"; dto: AcceptAiProposalResponseDto }
   | { kind: "limit-reached" }
+  | { kind: "generation-not-found" }
+  | { kind: "proposal-already-decided" };
+
+export type RejectAiProposalServiceResult =
+  | { kind: "success"; dto: RejectAiProposalResponseDto }
   | { kind: "generation-not-found" }
   | { kind: "proposal-already-decided" };
 
@@ -298,6 +304,72 @@ export async function acceptAiProposal(args: {
       limits: {
         aiAcceptedCardsRemaining: limits.aiAccepted.remaining - 1,
         resetAt: limits.resetAt.toISOString(),
+      },
+    },
+  };
+}
+
+export async function rejectAiProposal(args: {
+  supabaseAdmin: SupabaseAdminClient;
+  userId: string;
+  generationId: string;
+  proposalIndex: number;
+  reviewToken: string;
+}): Promise<RejectAiProposalServiceResult> {
+  const { supabaseAdmin, userId, generationId, proposalIndex } = args;
+
+  // 1. Verify generation session ownership.
+  const { data: generation, error: genError } = await supabaseAdmin
+    .from("ai_generation_requests")
+    .select("id")
+    .eq("generation_id", generationId)
+    .eq("user_id", userId)
+    .single();
+
+  if (genError || !generation) {
+    return { kind: "generation-not-found" };
+  }
+
+  // 2. Check if already decided (using ai_proposal_logs).
+  const { data: existingLog } = await supabaseAdmin
+    .from("ai_proposal_logs")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("generation_id", generationId)
+    .eq("proposal_index", proposalIndex)
+    .maybeSingle();
+
+  if (existingLog) {
+    return { kind: "proposal-already-decided" };
+  }
+
+  // 3. Log the rejection.
+  const { data: proposalLog, error: proposalLogError } = await supabaseAdmin
+    .from("ai_proposal_logs")
+    .insert({
+      user_id: userId,
+      generation_id: generationId,
+      proposal_index: proposalIndex,
+      accepted: false,
+      created_card_id: null,
+    })
+    .select()
+    .single();
+
+  if (proposalLogError) {
+    throw new Error(`Failed to log proposal rejection: ${proposalLogError.message}`);
+  }
+
+  return {
+    kind: "success",
+    dto: {
+      ok: true,
+      log: {
+        generationId: proposalLog.generation_id,
+        proposalIndex: proposalLog.proposal_index,
+        accepted: false,
+        createdCardId: null,
+        createdAt: proposalLog.created_at,
       },
     },
   };
