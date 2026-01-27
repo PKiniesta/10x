@@ -1,5 +1,11 @@
 import type { SupabaseAdminClient } from "../../db/supabase.admin";
-import type { AiInlineLimitsDto, StartAiGenerationFailureDto, StartAiGenerationSuccessDto } from "../../types";
+import type {
+  AcceptAiProposalResponseDto,
+  AiInlineLimitsDto,
+  CardDto,
+  StartAiGenerationFailureDto,
+  StartAiGenerationSuccessDto,
+} from "../../types";
 import { getTodayInlineLimits } from "./limits.service";
 import { generateProposalsWithOpenRouter } from "./openrouter.client";
 import { signReviewToken } from "./review-token.service";
@@ -32,6 +38,12 @@ type StartAiGenerationServiceResult =
   | { kind: "success"; dto: StartAiGenerationSuccessDto }
   | { kind: "upstream-failure"; dto: StartAiGenerationFailureDto }
   | { kind: "limit-reached" };
+
+export type AcceptAiProposalServiceResult =
+  | { kind: "success"; dto: AcceptAiProposalResponseDto }
+  | { kind: "limit-reached" }
+  | { kind: "generation-not-found" }
+  | { kind: "proposal-already-decided" };
 
 export async function startAiGeneration(args: {
   supabaseAdmin: SupabaseAdminClient;
@@ -174,4 +186,119 @@ export async function startAiGeneration(args: {
 
     return { kind: "upstream-failure", dto: failure };
   }
+}
+
+export async function acceptAiProposal(args: {
+  supabaseAdmin: SupabaseAdminClient;
+  userId: string;
+  generationId: string;
+  proposalIndex: number;
+  front: string;
+  back: string;
+  reviewToken: string;
+  now: Date;
+}): Promise<AcceptAiProposalServiceResult> {
+  const { supabaseAdmin, userId, generationId, proposalIndex, front, back, now } = args;
+
+  // 1. Check limits.
+  const limits = await getTodayInlineLimits({ supabaseAdmin, userId, now });
+  if (limits.aiAccepted.remaining <= 0) {
+    return { kind: "limit-reached" };
+  }
+
+  // 2. Verify generation session ownership.
+  const { data: generation, error: genError } = await supabaseAdmin
+    .from("ai_generation_requests")
+    .select("id")
+    .eq("generation_id", generationId)
+    .eq("user_id", userId)
+    .single();
+
+  if (genError || !generation) {
+    return { kind: "generation-not-found" };
+  }
+
+  // 3. Check if already decided (using ai_proposal_logs).
+  const { data: existingLog } = await supabaseAdmin
+    .from("ai_proposal_logs")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("generation_id", generationId)
+    .eq("proposal_index", proposalIndex)
+    .maybeSingle();
+
+  if (existingLog) {
+    return { kind: "proposal-already-decided" };
+  }
+
+  // 4. Atomic-ish operation (Supabase doesn't have transactions in JS, so we do it in order).
+  // First, create the card.
+  const { data: card, error: cardError } = await supabaseAdmin
+    .from("cards")
+    .insert({
+      user_id: userId,
+      front,
+      back,
+      origin: "ai",
+      ai_generation_id: generationId,
+    })
+    .select()
+    .single();
+
+  if (cardError) {
+    throw new Error(`Failed to create card: ${cardError.message}`);
+  }
+
+  // Then, log the proposal decision.
+  const { data: proposalLog, error: proposalLogError } = await supabaseAdmin
+    .from("ai_proposal_logs")
+    .insert({
+      user_id: userId,
+      generation_id: generationId,
+      proposal_index: proposalIndex,
+      accepted: true,
+      created_card_id: card.id,
+    })
+    .select()
+    .single();
+
+  if (proposalLogError) {
+    // If logging fails after card creation, we might have an orphaned card.
+    // In a production app, we would use a DB transaction (RPC).
+    throw new Error(`Failed to log proposal decision: ${proposalLogError.message}`);
+  }
+
+  // 5. Prepare response.
+  const cardDto: CardDto = {
+    id: card.id,
+    front: card.front,
+    back: card.back,
+    origin: "ai",
+    aiGenerationId: card.ai_generation_id,
+    createdAt: card.created_at,
+    updatedAt: card.updated_at,
+  };
+
+  const createdCardId = proposalLog.created_card_id;
+  if (!createdCardId) {
+    throw new Error("Unexpected error: created_card_id is null after insertion");
+  }
+
+  return {
+    kind: "success",
+    dto: {
+      card: cardDto,
+      log: {
+        generationId: proposalLog.generation_id,
+        proposalIndex: proposalLog.proposal_index,
+        accepted: true,
+        createdCardId,
+        createdAt: proposalLog.created_at,
+      },
+      limits: {
+        aiAcceptedCardsRemaining: limits.aiAccepted.remaining - 1,
+        resetAt: limits.resetAt.toISOString(),
+      },
+    },
+  };
 }
