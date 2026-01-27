@@ -1,7 +1,7 @@
 import type { APIContext } from "astro";
 
-import { createManualCard } from "@/lib/services/card.service";
-import { CreateManualCardSchema } from "@/lib/validation/cards";
+import { createManualCard, listCards } from "@/lib/services/card.service";
+import { CreateManualCardSchema, ListCardsQuerySchema } from "@/lib/validation/cards";
 import type { ApiErrorDto } from "@/types";
 
 export const prerender = false;
@@ -40,6 +40,67 @@ async function readJsonBody(request: Request): Promise<unknown> {
   }
 
   return request.json();
+}
+
+function readQueryParams(url: URL): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [key, value] of url.searchParams.entries()) {
+    // Keep the last value if duplicates are present.
+    out[key] = value;
+  }
+  return out;
+}
+
+export async function GET(context: APIContext): Promise<Response> {
+  // 1) Auth - check user session
+  const {
+    data: { user },
+    error: authError,
+  } = await context.locals.supabase.auth.getUser();
+
+  if (authError || !user) {
+    return apiError("AUTH_REQUIRED", "Authentication required.", 401);
+  }
+
+  // 2) Validate query
+  const url = new URL(context.request.url);
+  const rawQuery = readQueryParams(url);
+
+  const parsed = ListCardsQuerySchema.safeParse(rawQuery);
+  if (!parsed.success) {
+    const issues = parsed.error.issues.map((i) => ({ path: i.path, message: i.message }));
+
+    // Map to more specific error codes when possible.
+    const invalidPagination = issues.some(({ path }) => path[0] === "page" || path[0] === "pageSize");
+    if (invalidPagination) {
+      return apiError("INVALID_PAGINATION", "Invalid pagination parameters.", 400, { issues });
+    }
+
+    const invalidSort = issues.some(({ path }) => path[0] === "sort");
+    if (invalidSort) {
+      return apiError("INVALID_SORT", "Invalid sort parameter.", 400, { issues });
+    }
+
+    return apiError("VALIDATION_ERROR", "Invalid query parameters.", 400, { issues });
+  }
+
+  // 3) Logic
+  try {
+    const responseDto = await listCards(context.locals.supabase, user.id, parsed.data);
+    return jsonResponse(responseDto, { status: 200 });
+  } catch (err) {
+    // Allow the service layer to signal specific known errors.
+    if (err instanceof Error && err.message === "INVALID_PAGINATION") {
+      return apiError("INVALID_PAGINATION", "Invalid pagination parameters.", 400);
+    }
+    if (err instanceof Error && err.message === "INVALID_SORT") {
+      return apiError("INVALID_SORT", "Invalid sort parameter.", 400);
+    }
+
+    // eslint-disable-next-line no-console
+    console.error("GET /api/cards failed:", err);
+    return apiError("INTERNAL_ERROR", "An unexpected error occurred.", 500);
+  }
 }
 
 export async function POST(context: APIContext): Promise<Response> {
