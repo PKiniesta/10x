@@ -1,10 +1,7 @@
 import type { APIContext } from "astro";
 import type { ZodIssue } from "zod";
 
-import {
-  rejectAiProposalCommandSchema,
-  rejectAiProposalParamsSchema,
-} from "@/lib/validation/ai-generation.ts";
+import { rejectAiProposalCommandSchema, rejectAiProposalParamsSchema } from "@/lib/validation/ai-generation.ts";
 import { rejectAiProposal } from "@/lib/services/ai-generation.service.ts";
 import type { ApiErrorDto } from "@/types.ts";
 

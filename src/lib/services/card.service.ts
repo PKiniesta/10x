@@ -1,5 +1,12 @@
 import type { SupabaseClient } from "@/db/supabase.client";
-import type { CardEntity, CardDto, CreateManualCardCommand, CardOrigin, ListCardsResponseDto } from "@/types";
+import type {
+  CardEntity,
+  CardDto,
+  CreateManualCardCommand,
+  CardOrigin,
+  ListCardsResponseDto,
+  UpdateCardCommand,
+} from "@/types";
 import type { ListCardsQueryInput } from "@/lib/validation/cards";
 
 /**
@@ -101,6 +108,52 @@ export async function getCardById(supabase: SupabaseClient, userId: string, card
   }
 
   const { data, error } = await supabase.from("cards").select("*").eq("id", cardId).eq("user_id", userId).maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  if (!data) {
+    return null;
+  }
+
+  return mapToCardDto(data);
+}
+
+/**
+ * Updates a card (front and/or back) for the user.
+ * Returns `null` when card doesn't exist or belongs to another user.
+ */
+export async function updateCard(
+  supabase: SupabaseClient,
+  userId: string,
+  cardId: string,
+  patch: UpdateCardCommand
+): Promise<CardDto | null> {
+  if (!userId) {
+    throw new Error("AUTH_REQUIRED");
+  }
+
+  if (!cardId) {
+    throw new Error("INVALID_CARD_ID");
+  }
+
+  if (!patch.front && !patch.back) {
+    throw new Error("VALIDATION_ERROR");
+  }
+
+  const updatePayload: UpdateCardCommand = {
+    ...(patch.front !== undefined ? { front: patch.front } : {}),
+    ...(patch.back !== undefined ? { back: patch.back } : {}),
+  };
+
+  const { data, error } = await supabase
+    .from("cards")
+    .update(updatePayload)
+    .eq("id", cardId)
+    .eq("user_id", userId)
+    .select("*")
+    .maybeSingle();
 
   if (error) {
     throw error;

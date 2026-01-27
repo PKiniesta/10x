@@ -41,3 +41,30 @@ export type ListCardsQueryInput = z.infer<typeof ListCardsQuerySchema>;
 export const CardIdSchema = z.string().uuid("cardId must be a valid UUID");
 
 export type CardIdInput = z.infer<typeof CardIdSchema>;
+
+// -----------------------------
+// Update card (PATCH /api/cards/{cardId})
+// -----------------------------
+
+export const UpdateCardSchema = z
+  .object({
+    front: z
+      .string()
+      .trim()
+      .min(1, "Front must be at least 1 character")
+      .max(200, "Front must be at most 200 characters")
+      .optional(),
+    back: z
+      .string()
+      .trim()
+      .min(1, "Back must be at least 1 character")
+      .max(500, "Back must be at most 500 characters")
+      .optional(),
+  })
+  .strict()
+  .refine((v) => v.front !== undefined || v.back !== undefined, {
+    message: "At least one of 'front' or 'back' must be provided",
+    path: [],
+  });
+
+export type UpdateCardInput = z.infer<typeof UpdateCardSchema>;
