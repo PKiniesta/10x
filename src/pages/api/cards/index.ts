@@ -68,20 +68,9 @@ export async function GET(context: APIContext): Promise<Response> {
 
   const parsed = ListCardsQuerySchema.safeParse(rawQuery);
   if (!parsed.success) {
-    const issues = parsed.error.issues.map((i) => ({ path: i.path, message: i.message }));
-
-    // Map to more specific error codes when possible.
-    const invalidPagination = issues.some(({ path }) => path[0] === "page" || path[0] === "pageSize");
-    if (invalidPagination) {
-      return apiError("INVALID_PAGINATION", "Invalid pagination parameters.", 400, { issues });
-    }
-
-    const invalidSort = issues.some(({ path }) => path[0] === "sort");
-    if (invalidSort) {
-      return apiError("INVALID_SORT", "Invalid sort parameter.", 400, { issues });
-    }
-
-    return apiError("VALIDATION_ERROR", "Invalid query parameters.", 400, { issues });
+    return apiError("VALIDATION_ERROR", "Invalid query parameters.", 400, {
+      issues: parsed.error.issues.map((i) => ({ path: i.path, message: i.message })),
+    });
   }
 
   // 3) Logic
@@ -89,14 +78,6 @@ export async function GET(context: APIContext): Promise<Response> {
     const responseDto = await listCards(context.locals.supabase, user.id, parsed.data);
     return jsonResponse(responseDto, { status: 200 });
   } catch (err) {
-    // Allow the service layer to signal specific known errors.
-    if (err instanceof Error && err.message === "INVALID_PAGINATION") {
-      return apiError("INVALID_PAGINATION", "Invalid pagination parameters.", 400);
-    }
-    if (err instanceof Error && err.message === "INVALID_SORT") {
-      return apiError("INVALID_SORT", "Invalid sort parameter.", 400);
-    }
-
     // eslint-disable-next-line no-console
     console.error("GET /api/cards failed:", err);
     return apiError("INTERNAL_ERROR", "An unexpected error occurred.", 500);
