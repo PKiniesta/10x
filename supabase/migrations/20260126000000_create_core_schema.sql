@@ -40,7 +40,7 @@ $$;
 create table if not exists public.ai_generation_requests (
   id uuid primary key default gen_random_uuid(),
   generation_id uuid not null default gen_random_uuid(),
-  user_id uuid not null references auth.users (id),
+  user_id uuid not null, -- Removed references auth.users (id) for temporary security bypass
   created_at timestamptz not null default now(),
 
   input_length integer not null,
@@ -104,7 +104,7 @@ create policy ai_gen_req_select_authenticated
 -- stores user flashcards, either manual or accepted from ai.
 create table if not exists public.cards (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users (id),
+  user_id uuid not null, -- Removed references auth.users (id) for temporary security bypass
 
   front text not null,
   back text not null,
@@ -221,7 +221,7 @@ create policy cards_delete_authenticated
 -- logs acceptance/rejection decisions per proposal within a generation session.
 create table if not exists public.ai_proposal_logs (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users (id),
+  user_id uuid not null, -- Removed references auth.users (id) for temporary security bypass
   generation_id uuid not null,
   proposal_index integer not null,
   accepted boolean not null,

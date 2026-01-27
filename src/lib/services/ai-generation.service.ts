@@ -1,10 +1,5 @@
 import type { SupabaseAdminClient } from "../../db/supabase.admin";
-import type {
-  AiInlineLimitsDto,
-  StartAiGenerationFailureDto,
-  StartAiGenerationResponseDto,
-  StartAiGenerationSuccessDto,
-} from "../../types";
+import type { AiInlineLimitsDto, StartAiGenerationFailureDto, StartAiGenerationSuccessDto } from "../../types";
 import { getTodayInlineLimits } from "./limits.service";
 import { generateProposalsWithOpenRouter } from "./openrouter.client";
 import { signReviewToken } from "./review-token.service";
@@ -13,7 +8,11 @@ function toIso(date: Date): string {
   return date.toISOString();
 }
 
-function toInlineLimitsDto(limits: { generationRemaining: number; acceptedRemaining: number; resetAt: Date }): AiInlineLimitsDto {
+function toInlineLimitsDto(limits: {
+  generationRemaining: number;
+  acceptedRemaining: number;
+  resetAt: Date;
+}): AiInlineLimitsDto {
   return {
     generationRequestsRemaining: limits.generationRemaining,
     aiAcceptedCardsRemaining: limits.acceptedRemaining,
@@ -70,7 +69,7 @@ export async function startAiGeneration(args: {
   const generationId = insertRes.data.generation_id;
 
   let provider: string | undefined;
-  let model: string | undefined;
+  let model: string | undefined | null;
 
   try {
     const ac = new AbortController();

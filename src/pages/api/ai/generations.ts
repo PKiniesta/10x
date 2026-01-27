@@ -6,11 +6,6 @@ import { startAiGeneration } from "../../../lib/services/ai-generation.service";
 
 export const prerender = false;
 
-// MVP: no session/auth yet.
-function getMockUserId(): string {
-  return import.meta.env.MOCK_SUPABASE_USER_ID ?? "00000000-0000-0000-0000-000000000001";
-}
-
 function jsonResponse(body: unknown, init: ResponseInit): Response {
   return new Response(JSON.stringify(body), {
     ...init,
@@ -21,7 +16,12 @@ function jsonResponse(body: unknown, init: ResponseInit): Response {
   });
 }
 
-function apiError(code: ApiErrorDto["error"]["code"], message: string, status: number, details?: Record<string, unknown>): Response {
+function apiError(
+  code: ApiErrorDto["error"]["code"],
+  message: string,
+  status: number,
+  details?: Record<string, unknown>
+): Response {
   const body: ApiErrorDto = {
     error: {
       code,
@@ -45,7 +45,10 @@ async function readJsonBody(request: Request): Promise<unknown> {
 export async function POST(context: APIContext): Promise<Response> {
   const now = new Date();
 
-  const userId = getMockUserId();
+  // Auth: temporarily disabled (will be re-enabled in the next version).
+  // NOTE: When auth returns, restore the session check and use the real `user.id`.
+  // Using a valid UUID placeholder to avoid database cast errors.
+  const userId = "00000000-0000-0000-0000-000000000000";
 
   // 2) Parse JSON
   let raw: unknown;

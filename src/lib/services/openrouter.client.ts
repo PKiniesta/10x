@@ -13,11 +13,11 @@ const proposalsResponseSchema = z.object({
 
 type OpenRouterChatCompletionResponse = {
   model?: string;
-  choices?: Array<{
+  choices?: {
     message?: {
       content?: string;
     };
-  }>;
+  }[];
 };
 
 function getApiKey(): string {
@@ -39,7 +39,7 @@ function safeJsonParse(text: string): unknown {
 function buildPrompt(inputText: string, requestedCardsCount: number): string {
   return [
     "You generate flashcard proposals from a long source text.",
-    'Return EXACTLY a single JSON object with shape: { "proposals": [{"front": string, "back": string}, ...] }',
+    "Return EXACTLY a single JSON object with shape: { \"proposals\": [{\"front\": string, \"back\": string}, ...] }",
     `Generate ${requestedCardsCount} proposals.`,
     "Front must be <= 200 chars, back <= 500 chars.",
     "Do not include markdown.",
@@ -53,60 +53,59 @@ export async function generateProposalsWithOpenRouter(args: {
   inputText: string;
   requestedCardsCount: number;
   signal: AbortSignal;
-}): Promise<{ provider: string; model: string | null; proposals: Array<{ front: string; back: string }> }> {
+}): Promise<{ provider: string; model: string | null; proposals: { front: string; back: string }[] }> {
   const { inputText, requestedCardsCount, signal } = args;
 
   const apiKey = getApiKey();
 
   const model = import.meta.env.OPENROUTER_MODEL ?? "openai/gpt-4o-mini";
+  //TEMPORARY DISABLED, waitiing for seetting up connection to openrouter
+  // const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+  //   method: "POST",
+  //   headers: {
+  //     Authorization: `Bearer ${apiKey}`,
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify({
+  //     model,
+  //     messages: [
+  //       {
+  //         role: "user",
+  //         content: buildPrompt(inputText, requestedCardsCount),
+  //       },
+  //     ],
+  //     temperature: 0.2,
+  //     max_tokens: 1200,
+  //   }),
+  //   signal,
+  // });
 
-  const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      messages: [
-        {
-          role: "user",
-          content: buildPrompt(inputText, requestedCardsCount),
-        },
-      ],
-      temperature: 0.2,
-      max_tokens: 1200,
-    }),
-    signal,
-  });
-
-  if (!res.ok) {
-    throw new Error(`OPENROUTER_UPSTREAM_ERROR:${res.status}`);
-  }
-
-  const data = (await res.json()) as OpenRouterChatCompletionResponse;
-  const content = data.choices?.[0]?.message?.content;
-
-  if (!content || typeof content !== "string") {
-    throw new Error("OPENROUTER_BAD_RESPONSE:missing_content");
-  }
-
-  const parsedJson = safeJsonParse(content);
-  const parsed = proposalsResponseSchema.safeParse(parsedJson);
-  if (!parsed.success) {
-    throw new Error("OPENROUTER_BAD_RESPONSE:invalid_json_shape");
-  }
-
-  // Provider may return fewer proposals than requested.
-  const proposals = parsed.data.proposals.slice(0, requestedCardsCount);
-
-  if (proposals.length === 0) {
-    throw new Error("OPENROUTER_BAD_RESPONSE:empty_proposals");
-  }
-
+  // if (!res.ok) {
+  //   throw new Error(`OPENROUTER_UPSTREAM_ERROR:${res.status}`);
+  // }
+  //
+  // const data = (await res.json()) as OpenRouterChatCompletionResponse;
+  // const content = data.choices?.[0]?.message?.content;
+  //
+  // if (!content || typeof content !== "string") {
+  //   throw new Error("OPENROUTER_BAD_RESPONSE:missing_content");
+  // }
+  //
+  // const parsedJson = safeJsonParse(content);
+  // const parsed = proposalsResponseSchema.safeParse(parsedJson);
+  // if (!parsed.success) {
+  //   throw new Error("OPENROUTER_BAD_RESPONSE:invalid_json_shape");
+  // }
+  //
+  // // Provider may return fewer proposals than requested.
+  // const proposals = parsed.data.proposals.slice(0, requestedCardsCount);
+  //
+  // if (proposals.length === 0) {
+  //   throw new Error("OPENROUTER_BAD_RESPONSE:empty_proposals");
+  // }
   return {
     provider,
-    model: data.model ?? model,
-    proposals,
+    model: model,
+    proposals: [],
   };
 }
