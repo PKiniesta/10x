@@ -24,7 +24,6 @@ export const ListCardsQuerySchema = z
     q: z
       .string()
       .trim()
-      .min(1)
       .max(200)
       .optional()
       .transform((v) => (v && v.length > 0 ? v : undefined)),
