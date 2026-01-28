@@ -97,7 +97,7 @@ export default function CardsListPage() {
   const isBusy = view.status === "loading";
 
   const onCreateClick = React.useCallback(() => {
-    window.location.href = "/cards/new";
+    window.location.href = "/ai/generate";
   }, []);
 
   const onDelete = React.useCallback(
@@ -156,7 +156,7 @@ export default function CardsListPage() {
         </div>
 
         <Button type="button" onClick={onCreateClick}>
-          Nowa fiszka
+          Nowa fiszka AI
         </Button>
       </header>
 
