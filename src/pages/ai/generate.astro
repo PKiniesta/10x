@@ -1,0 +1,10 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { AIGenerationPage } from "@/components/cards/AIGenerationPage";
+---
+
+<Layout title="Generowanie AI">
+  <main class="mx-auto w-full max-w-3xl px-4 py-8">
+    <AIGenerationPage client:load />
+  </main>
+</Layout>

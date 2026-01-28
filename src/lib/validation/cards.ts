@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const CreateManualCardSchema = z.object({
-  front: z.string().min(1, "Front is required").max(200, "Front must be at most 200 characters"),
-  back: z.string().min(1, "Back is required").max(500, "Back must be at most 500 characters"),
+  front: z.string().min(1, "Treść awersu jest wymagana").max(200, "Treść awersu nie może przekraczać 200 znaków"),
+  back: z.string().min(1, "Treść rewersu jest wymagana").max(500, "Treść rewersu nie może przekraczać 500 znaków"),
 });
 
 export type CreateManualCardInput = z.infer<typeof CreateManualCardSchema>;

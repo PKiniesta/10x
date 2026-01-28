@@ -172,7 +172,9 @@ export default function CardsListPage() {
           <p className="text-sm">Aby zobaczyć swoje fiszki, musisz się zalogować.</p>
           <div className="mt-3">
             <Button asChild>
-              <a href={`/login?redirectTo=${encodeURIComponent(window.location.pathname + window.location.search)}`}>Zaloguj się</a>
+              <a href={`/login?redirectTo=${encodeURIComponent(window.location.pathname + window.location.search)}`}>
+                Zaloguj się
+              </a>
             </Button>
           </div>
         </div>
