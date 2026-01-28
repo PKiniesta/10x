@@ -1,8 +1,7 @@
 ---
 import { ThemeToggle } from "@/components/ThemeToggle";
 
-// Placeholder for user presence - logic will be added later
-const user = null;
+const { user } = Astro.locals;
 ---
 
 <header class="border-b bg-background">
@@ -14,9 +13,6 @@ const user = null;
           <>
             <a href="/cards" class="transition-colors hover:text-primary">
               Lista fiszek
-            </a>
-            <a href="/ai/generate" class="transition-colors hover:text-primary">
-              Generuj z AI
             </a>
             <a href="/cards/new" class="transition-colors hover:text-primary">
               Generuj manualnie
@@ -40,10 +36,38 @@ const user = null;
             </a>
           </>
         ) : (
-          <span class="text-sm font-medium">Witaj!</span>
+          <div class="flex items-center gap-4">
+            <span class="text-muted-foreground hidden text-sm sm:inline">{user.email}</span>
+            <button
+              id="logout-button"
+              class="text-sm font-medium transition-colors hover:text-destructive"
+              title="Wyloguj się"
+            >
+              Wyloguj
+            </button>
+          </div>
         )
       }
       <ThemeToggle client:load />
     </div>
   </div>
 </header>
+
+<script>
+  const logoutButton = document.getElementById("logout-button");
+  if (logoutButton) {
+    logoutButton.addEventListener("click", async () => {
+      try {
+        const response = await fetch("/api/auth/logout", {
+          method: "POST",
+        });
+        if (response.ok) {
+          window.location.href = "/login";
+        }
+      } catch (error) {
+        console.error("Logout failed:", error);
+      }
+    });
+  }
+</script>
+

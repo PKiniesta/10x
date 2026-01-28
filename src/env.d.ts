@@ -1,5 +1,6 @@
 /// <reference types="astro/client" />
 
+import type { User, Session } from "@supabase/supabase-js";
 import type { SupabaseAdminClient } from "./db/supabase.admin.ts";
 import type { SupabaseClient } from "./db/supabase.client.ts";
 
@@ -8,6 +9,8 @@ declare global {
     interface Locals {
       supabase: SupabaseClient;
       supabaseAdmin: SupabaseAdminClient;
+      user: User | null;
+      session: Session | null;
     }
   }
 }

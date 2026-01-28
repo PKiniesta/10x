@@ -24,13 +24,27 @@ export function LoginForm() {
     setIsLoading(true);
     setError(null);
 
-    // UI Only implementation - logic will be added later
-    // Logic will be added later
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    // For now just simulate loading
-    setTimeout(() => {
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Wystąpił błąd podczas logowania");
+      }
+
+      window.location.href = "/cards";
+    } catch (err: any) {
+      setError(err instanceof Error ? err.message : "Wystąpił błąd podczas logowania");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   }
 
   return (

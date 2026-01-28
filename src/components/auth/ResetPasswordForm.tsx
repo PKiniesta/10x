@@ -26,12 +26,27 @@ export function ResetPasswordForm() {
     setError(null);
     setSuccess(false);
 
-    // UI Only implementation
+    try {
+      const response = await fetch("/api/auth/update-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    setTimeout(() => {
-      setIsLoading(false);
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Wystąpił błąd");
+      }
+
       setSuccess(true);
-    }, 1000);
+    } catch (err: any) {
+      setError(err instanceof Error ? err.message : "Wystąpił błąd");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   if (success) {

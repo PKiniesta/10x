@@ -25,11 +25,28 @@ export function RegisterForm() {
     setIsLoading(true);
     setError(null);
 
-    // UI Only implementation
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    setTimeout(() => {
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Wystąpił błąd podczas rejestracji");
+      }
+
+      alert(result.message || "Konto zostało utworzone. Sprawdź e-mail.");
+      window.location.href = "/login";
+    } catch (err: any) {
+      setError(err instanceof Error ? err.message : "Wystąpił błąd podczas rejestracji");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   }
 
   return (
