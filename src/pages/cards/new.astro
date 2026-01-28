@@ -1,10 +1,11 @@
 ---
 import Layout from "@/layouts/Layout.astro";
 import CreateCardPage from "@/components/cards/CreateCardPage.tsx";
+import { AIGenerationPage } from "@/components/cards/AIGenerationPage.tsx";
 ---
 
-<Layout title="Nowa fiszka">
+<Layout title="Nowe fiszki AI">
   <main class="mx-auto w-full max-w-3xl px-4 py-8">
-    <CreateCardPage client:load />
+    <AIGenerationPage client:load />
   </main>
 </Layout>
