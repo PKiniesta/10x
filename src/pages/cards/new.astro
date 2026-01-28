@@ -1,0 +1,10 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import CreateCardPage from "@/components/cards/CreateCardPage.tsx";
+---
+
+<Layout title="Nowa fiszka">
+  <main class="mx-auto w-full max-w-3xl px-4 py-8">
+    <CreateCardPage client:load />
+  </main>
+</Layout>
