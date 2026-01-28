@@ -1,0 +1,10 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import { LoginForm } from "@/components/auth/LoginForm";
+---
+
+<Layout title="Logowanie | 10x Fiszki">
+  <main class="container mx-auto flex min-h-[calc(100vh-64px)] items-center justify-center p-4">
+    <LoginForm client:load />
+  </main>
+</Layout>
