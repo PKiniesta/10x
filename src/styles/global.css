@@ -73,8 +73,8 @@
   --muted-foreground: oklch(0.6974 0.0282 300.0614);
   --accent: oklch(0.3181 0.0321 308.6149);
   --accent-foreground: oklch(0.8391 0.0692 2.6681);
-  --destructive: oklch(0.6875 0.1420 21.4566);
-  --destructive-foreground: oklch(0.2166 0.0215 292.8474);
+  --destructive: oklch(0.55 0.15 22.67);
+  --destructive-foreground: oklch(0.9053 0.0245 293.5570);
   --border: oklch(0.3063 0.0359 293.3367);
   --input: oklch(0.2847 0.0346 291.2726);
   --ring: oklch(0.7058 0.0777 302.0489);
@@ -169,5 +169,12 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  input,
+  button,
+  select,
+  textarea {
+    color: inherit;
+    font-family: inherit;
   }
 }

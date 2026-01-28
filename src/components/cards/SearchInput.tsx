@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 type Props = {
   value: string;
@@ -15,15 +16,15 @@ export function SearchInput({ value, onChange, placeholder = "Szukaj…", disabl
       <label className="sr-only" htmlFor="cards-search">
         Wyszukaj fiszki
       </label>
-      <input
+      <Input
         id="cards-search"
         type="search"
-        className="h-9 w-full rounded-md border bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50"
         value={value}
         placeholder={placeholder}
         disabled={disabled}
         maxLength={200}
         onChange={(e) => onChange(e.currentTarget.value.slice(0, 200))}
+        className="text-foreground"
       />
 
       <Button

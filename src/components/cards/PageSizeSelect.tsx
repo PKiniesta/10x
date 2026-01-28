@@ -16,7 +16,7 @@ export function PageSizeSelect({ value, onChange, disabled }: Props) {
       </label>
       <select
         id="cards-page-size"
-        className="h-9 rounded-md border bg-background px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50"
+        className="h-9 rounded-md border bg-background px-2 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50"
         value={String(value)}
         disabled={disabled}
         onChange={(e) => {

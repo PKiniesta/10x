@@ -33,7 +33,7 @@ export function DeleteCardConfirmDialog({ open, card, isPending, errorMessage, o
     <dialog
       ref={dialogRef}
       aria-label="Potwierdź usunięcie fiszki"
-      className="fixed inset-0 m-auto w-full max-w-md rounded-lg border bg-background p-0 shadow-lg backdrop:bg-black/50"
+      className="fixed inset-0 m-auto w-full max-w-md rounded-lg border bg-background p-0 text-foreground shadow-lg backdrop:bg-black/50"
       onCancel={(e) => {
         e.preventDefault();
         if (isPending) return;
