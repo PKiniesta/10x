@@ -32,6 +32,11 @@ The key value proposition includes:
   - Github Actions for creating CI/CD pipelines
   - DigitalOcean for hosting the application via Docker image
 
+- **Testing**:
+  - **Vitest** for unit and integration testing of services, validation, and helpers
+  - **MSW (Mock Service Worker)** for mocking API responses (e.g., OpenRouter) during testing
+  - **Playwright** for end-to-end (E2E) testing, visual testing, and accessibility (A11y) verification
+
 ## Getting Started Locally
 
 ### Prerequisites
