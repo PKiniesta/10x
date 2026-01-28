@@ -97,7 +97,9 @@ export async function startAiGeneration(args: {
       inputText,
       requestedCardsCount,
       signal: ac.signal,
-    }).finally(() => clearTimeout(timeout));
+    })
+      .catch((e) => console.error(e))
+      .finally(() => clearTimeout(timeout));
 
     provider = upstream.provider;
     model = upstream.model;
