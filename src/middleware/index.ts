@@ -42,6 +42,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     url.pathname.startsWith("/cards") ||
     url.pathname.startsWith("/api/cards") ||
     url.pathname.startsWith("/api/ai") ||
+    url.pathname.startsWith("/api/limits") ||
     url.pathname.startsWith("/ai/");
 
   if (!user && isProtectedPath && !isPublicPath) {

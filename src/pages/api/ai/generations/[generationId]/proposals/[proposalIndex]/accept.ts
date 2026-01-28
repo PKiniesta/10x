@@ -43,16 +43,15 @@ async function readJsonBody(request: Request): Promise<unknown> {
   return request.json();
 }
 
-/**
- * POST /api/ai/generations/:generationId/proposals/:proposalIndex/accept
- * Accepts an AI-generated proposal and creates a card.
- */
 export async function POST(context: APIContext): Promise<Response> {
-  const now = new Date();
+  const { user, supabaseAdmin } = context.locals;
 
-  // Auth: placeholder as in other AI endpoints.
-  // In a real application, we would retrieve the userId from the session.
-  const userId = "00000000-0000-0000-0000-000000000000";
+  if (!user) {
+    return apiError("AUTH_REQUIRED", "Authentication required.", 401);
+  }
+
+  const userId = user.id;
+  const now = new Date();
 
   // 1) Validate URL Parameters
   const paramsParsed = acceptAiProposalParamsSchema.safeParse(context.params);

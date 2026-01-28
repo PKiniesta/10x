@@ -43,13 +43,14 @@ async function readJsonBody(request: Request): Promise<unknown> {
   return request.json();
 }
 
-/**
- * POST /api/ai/generations/:generationId/proposals/:proposalIndex/reject
- * Rejects an AI-generated proposal.
- */
 export async function POST(context: APIContext): Promise<Response> {
-  // Auth: placeholder as in other AI endpoints.
-  const userId = "00000000-0000-0000-0000-000000000000";
+  const { user, supabaseAdmin } = context.locals;
+
+  if (!user) {
+    return apiError("AUTH_REQUIRED", "Authentication required.", 401);
+  }
+
+  const userId = user.id;
 
   // 1) Validate URL Parameters
   const paramsParsed = rejectAiProposalParamsSchema.safeParse(context.params);

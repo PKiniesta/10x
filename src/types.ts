@@ -186,6 +186,17 @@ export type AcceptAiProposalCommand = Pick<CardEntity, "front" | "back"> & {
   reviewToken: string;
 };
 
+/** Command: reject proposal (`POST /api/ai/generations/{generationId}/proposals/{proposalIndex}/reject`). */
+export type RejectAiProposalCommand = {
+  reviewToken: string;
+};
+
+/** Response: reject proposal. */
+export type RejectAiProposalResponseDto = {
+  ok: true;
+  log: AiProposalLogDto;
+};
+
 /** Response: accept proposal. */
 export type AcceptAiProposalResponseDto = {
   card: CardDto;
@@ -202,22 +213,6 @@ export type AcceptAiProposalResponseDto = {
   };
 };
 
-/** Command: reject proposal (`POST /api/ai/generations/{generationId}/proposals/{proposalIndex}/reject`). */
-export type RejectAiProposalCommand = {
-  reviewToken: string;
-};
-
-/** Response: reject proposal. */
-export type RejectAiProposalResponseDto = {
-  ok: true;
-  log: {
-    generationId: AiProposalLogEntity["generation_id"];
-    proposalIndex: AiProposalLogEntity["proposal_index"];
-    accepted: false;
-    createdCardId: null;
-    createdAt: AiProposalLogEntity["created_at"];
-  };
-};
 
 // -----------------------------
 // AI generation logs (optional read-only endpoints)

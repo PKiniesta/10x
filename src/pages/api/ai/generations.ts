@@ -43,12 +43,14 @@ async function readJsonBody(request: Request): Promise<unknown> {
 }
 
 export async function POST(context: APIContext): Promise<Response> {
-  const now = new Date();
+  const { user, supabaseAdmin } = context.locals;
 
-  // Auth: temporarily disabled (will be re-enabled in the next version).
-  // NOTE: When auth returns, restore the session check and use the real `user.id`.
-  // Using a valid UUID placeholder to avoid database cast errors.
-  const userId = "00000000-0000-0000-0000-000000000000";
+  if (!user) {
+    return apiError("AUTH_REQUIRED", "Authentication required.", 401);
+  }
+
+  const userId = user.id;
+  const now = new Date();
 
   // 2) Parse JSON
   let raw: unknown;
