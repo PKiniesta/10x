@@ -7,7 +7,7 @@
     "dev:e2e": "astro dev --mode test",
     "build": "astro build",
     "preview": "astro preview",
-    "deploy": "npm run build && wrangler pages deploy dist --project-name=10x",
+    "deploy": "npm run build && wrangler pages deploy --project-name=10x dist",
     "astro": "astro",
     "lint": "eslint",
     "lint:fix": "eslint --fix",

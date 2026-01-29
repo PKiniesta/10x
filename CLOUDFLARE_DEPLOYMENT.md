@@ -8,7 +8,7 @@ npm run deploy
 
 # Lub krok po kroku:
 npm run build
-wrangler pages deploy dist --project-name=10x
+wrangler pages deploy --project-name=10x dist
 ```
 
 **WAŻNE**: To jest projekt Cloudflare **Pages**, nie Workers. Używaj `wrangler pages deploy`, nie `wrangler deploy`!
@@ -114,7 +114,7 @@ Projekt używa `@astrojs/cloudflare` adapter, który:
 
 ### "Workers-specific command in a Pages project" error
 - **Problem**: Próba użycia `wrangler deploy` zamiast `wrangler pages deploy`
-- **Rozwiązanie**: Użyj `npm run deploy` lub `wrangler pages deploy dist --project-name=10x`
+- **Rozwiązanie**: Użyj `npm run deploy` lub `wrangler pages deploy --project-name=10x dist`
 - Ten projekt to Cloudflare **Pages**, nie Workers - polecenia są inne!
 
 ### Aplikacja nie działa po deploy
