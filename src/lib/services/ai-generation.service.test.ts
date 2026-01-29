@@ -230,6 +230,51 @@ describe("ai-generation.service integration tests", () => {
       expect(result.kind).toBe("limit-reached");
     });
 
+    it("should return limit-reached when generation limit is exactly at maximum (10/10)", async () => {
+      const supabaseAdmin = createMockSupabaseAdmin({
+        generationRequestUsed: 10,
+        acceptedProposalsUsed: 0,
+      });
+
+      const result = await startAiGeneration({
+        supabaseAdmin,
+        userId: TEST_USER_ID,
+        inputText: validInputText,
+        requestedCardsCount,
+        now,
+      });
+
+      expect(result.kind).toBe("limit-reached");
+    });
+
+    it("should allow generation when limit is just under maximum (9/10)", async () => {
+      const mockProposals = [{ front: "Q1", back: "A1" }];
+
+      server.use(
+        http.post("https://openrouter.ai/api/v1/chat/completions", () => {
+          return HttpResponse.json(createMockOpenRouterResponse(mockProposals));
+        })
+      );
+
+      const supabaseAdmin = createMockSupabaseAdmin({
+        generationRequestUsed: 9,
+        acceptedProposalsUsed: 0,
+      });
+
+      const result = await startAiGeneration({
+        supabaseAdmin,
+        userId: TEST_USER_ID,
+        inputText: validInputText,
+        requestedCardsCount,
+        now,
+      });
+
+      expect(result.kind).toBe("success");
+      if (result.kind === "success") {
+        expect(result.dto.ok).toBe(true);
+      }
+    });
+
     it("should return upstream-failure when OpenRouter returns an error", async () => {
       server.use(
         http.post("https://openrouter.ai/api/v1/chat/completions", () => {
@@ -370,6 +415,26 @@ describe("ai-generation.service integration tests", () => {
     it("should return limit-reached when daily accept limit is exhausted", async () => {
       const supabaseAdmin = createMockSupabaseAdmin({
         acceptedProposalsUsed: 20,
+      });
+
+      const result = await acceptAiProposal({
+        supabaseAdmin,
+        userId: TEST_USER_ID,
+        generationId: TEST_GENERATION_ID,
+        proposalIndex,
+        front: validFront,
+        back: validBack,
+        reviewToken,
+        now,
+      });
+
+      expect(result.kind).toBe("limit-reached");
+    });
+
+    it("should return limit-reached when accept limit is exactly at maximum (20/20)", async () => {
+      const supabaseAdmin = createMockSupabaseAdmin({
+        acceptedProposalsUsed: 20,
+        generationExists: true,
       });
 
       const result = await acceptAiProposal({
