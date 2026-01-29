@@ -16,7 +16,7 @@ function truncate(text: string, max = 120): string {
 
 export const CardListItem = React.memo(function CardListItem({ card, href, onDelete }: Props) {
   return (
-    <li className="rounded-lg border bg-background p-4">
+    <li className="rounded-lg border bg-background p-4" data-test-id={`card-item-${card.id}`}>
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           <a href={href} className="block min-w-0">
@@ -31,6 +31,7 @@ export const CardListItem = React.memo(function CardListItem({ card, href, onDel
           size="sm"
           onClick={() => onDelete(card.id)}
           aria-label={`Usuń fiszkę: ${truncate(card.front, 40)}`}
+          data-test-id={`card-delete-button-${card.id}`}
         >
           Usuń
         </Button>

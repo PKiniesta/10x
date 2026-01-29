@@ -39,4 +39,13 @@ export class CardsListPagePom {
     await expect(this.root).toBeVisible();
     await expect(this.loadingIndicator).not.toBeVisible();
   }
+
+  async deleteCard(cardId: string): Promise<void> {
+    const deleteButton = this.page.getByTestId(`card-delete-button-${cardId}`);
+    await deleteButton.click();
+  }
+
+  async expectCardNotVisible(cardId: string): Promise<void> {
+    await expect(this.page.getByTestId(`card-item-${cardId}`)).not.toBeVisible();
+  }
 }
