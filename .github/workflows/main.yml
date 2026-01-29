@@ -75,7 +75,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy --project-name=10x --branch=main dist
+          command: pages deploy dist --project-name=10x
 
   status-comment:
     name: Deployment Status
