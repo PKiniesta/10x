@@ -91,7 +91,7 @@ Log decyzji per propozycja w ramach `generation_id` (wymagane do KPI 1).
 
 **Spójność: (rekomendowane CHECK)**
 - CHECK:
-  - `accepted = true => created_card_id IS NOT NULL`
+  - `accepted = true` (dopuszcza `created_card_id IS NULL` jeśli fiszka została usunięta — `ON DELETE SET NULL`)
   - `accepted = false => created_card_id IS NULL`
 
 

@@ -636,7 +636,7 @@ These endpoints are optional for MVP UI but useful for monitoring and verifying 
 - unique decision per proposal:
   - UNIQUE (`user_id`, `generation_id`, `proposal_index`) (`ai_prop_logs_user_generation_proposal_unique`)
 - accepted/card consistency:
-  - accepted=true requires `created_card_id`
+  - accepted=true (dopuszcza NULL jeśli fiszka usunięta)
   - accepted=false requires `created_card_id is null` (`ai_prop_logs_accepted_card_consistency_check`)
 
 ### 4.2 Business logic mapping (PRD → API)
