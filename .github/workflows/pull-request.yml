@@ -9,6 +9,8 @@ jobs:
     name: Lint Code
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Setup
         uses: ./.github/actions/setup
       - name: Run Lint
@@ -19,6 +21,8 @@ jobs:
     needs: lint
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Setup
         uses: ./.github/actions/setup
       - name: Run Unit Tests with Coverage
@@ -44,6 +48,8 @@ jobs:
       E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
       E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Setup
         uses: ./.github/actions/setup
       - name: Install Playwright Browsers
