@@ -97,9 +97,8 @@ export async function startAiGeneration(args: {
       inputText,
       requestedCardsCount,
       signal: ac.signal,
-    })
-      .catch((e) => console.error(e))
-      .finally(() => clearTimeout(timeout));
+    });
+    clearTimeout(timeout);
 
     provider = upstream.provider;
     model = upstream.model;
@@ -127,21 +126,21 @@ export async function startAiGeneration(args: {
     const reviewToken = signReviewToken({ userId, generationId, now });
 
     // Recompute limits after logging this request (used+1)
-    const limitsAfter = await getTodayInlineLimits({ supabaseAdmin, userId, now });
+    const { generation, aiAccepted, resetAt } = await getTodayInlineLimits({ supabaseAdmin, userId, now });
 
     const success: StartAiGenerationSuccessDto = {
       ok: true,
       generationId,
       reviewToken,
-      proposals: upstream.proposals.map((p, idx) => ({
+      proposals: upstream.proposals.map(({ front, back }, idx) => ({
         proposalIndex: idx,
-        front: p.front,
-        back: p.back,
+        front,
+        back,
       })),
       limits: toInlineLimitsDto({
-        generationRemaining: limitsAfter.generation.remaining,
-        acceptedRemaining: limitsAfter.aiAccepted.remaining,
-        resetAt: limitsAfter.resetAt,
+        generationRemaining: generation.remaining,
+        acceptedRemaining: aiAccepted.remaining,
+        resetAt,
       }),
     };
 
