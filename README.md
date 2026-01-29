@@ -68,6 +68,7 @@ The key value proposition includes:
 - `npm run dev` - Start the development server
 - `npm run build` - Build the project for production (Cloudflare Pages)
 - `npm run preview` - Preview the production build locally
+- `npm run deploy` - Build and deploy to Cloudflare Pages
 - `npm run astro` - Run Astro CLI commands
 - `npm run lint` - Run ESLint for code linting
 - `npm run lint:fix` - Run ESLint with auto-fix
@@ -79,7 +80,23 @@ The key value proposition includes:
 
 ## Deployment
 
-The application is automatically deployed to Cloudflare Pages when changes are pushed to the `main` branch. For detailed deployment instructions and configuration, see [CLOUDFLARE_DEPLOYMENT.md](./CLOUDFLARE_DEPLOYMENT.md).
+### Quick Deploy
+
+To deploy manually to Cloudflare Pages:
+
+```bash
+npm run deploy
+```
+
+This will build the project and deploy it using the correct Cloudflare Pages command. 
+
+**Important**: This is a Cloudflare **Pages** project, not Workers. Always use `wrangler pages deploy`, never `wrangler deploy`.
+
+### Automatic Deployment
+
+The application is automatically deployed to Cloudflare Pages when changes are pushed to the `main` branch via GitHub Actions.
+
+For detailed deployment instructions, configuration, and troubleshooting, see [CLOUDFLARE_DEPLOYMENT.md](./CLOUDFLARE_DEPLOYMENT.md).
 
 ## Project Scope
 
