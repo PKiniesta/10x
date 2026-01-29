@@ -60,21 +60,24 @@ jobs:
       deployments: write
     environment:
       name: production
-      url: ${{ steps.deployment.outputs.url }}
+      url: ${{ steps.deployment.outputs.deployment-url }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist/
+
       - name: Deploy to Cloudflare Pages
+        id: deployment
         uses: cloudflare/wrangler-action@v4
         with:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: pages deploy dist --project-name=10x
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=10x
 
   status-comment:
     name: Deployment Status
@@ -84,8 +87,8 @@ jobs:
     steps:
       - name: Deployment Success Notification
         run: |
-          echo "🚀 Deployment successful!"
-          echo "✅ Linting: Passed"
-          echo "✅ Unit Tests: Passed"
-          echo "✅ Build: Completed"
-          echo "✅ Deploy: Live on Cloudflare Pages"
+          echo "Deployment successful!"
+          echo "Linting: Passed"
+          echo "Unit Tests: Passed"
+          echo "Build: Completed"
+          echo "Deploy: Live on Cloudflare Pages"
