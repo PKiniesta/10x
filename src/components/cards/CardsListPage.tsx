@@ -97,7 +97,7 @@ export default function CardsListPage() {
   const isBusy = view.status === "loading";
 
   const onCreateClick = React.useCallback(() => {
-    window.location.href = "/ai/generate";
+    globalThis.location.href = "/ai/generate";
   }, []);
 
   const onDelete = React.useCallback(
@@ -148,7 +148,7 @@ export default function CardsListPage() {
   }, [deleteState.card, query.page, setPage, view]);
 
   return (
-    <section aria-label="Lista fiszek" className="space-y-6">
+    <section aria-label="Lista fiszek" className="space-y-6" data-test-id="cards-list-page">
       <header className="flex items-start justify-between gap-4">
         <div className="space-y-1">
           <h1 className="text-2xl font-semibold">Fiszki</h1>
@@ -168,11 +168,14 @@ export default function CardsListPage() {
       </div>
 
       {view.status === "unauthorized" ? (
-        <div className="rounded-lg border bg-background p-4">
+        <div className="rounded-lg border bg-background p-4" data-test-id="cards-unauthorized">
           <p className="text-sm">Aby zobaczyć swoje fiszki, musisz się zalogować.</p>
           <div className="mt-3">
             <Button asChild>
-              <a href={`/login?redirectTo=${encodeURIComponent(window.location.pathname + window.location.search)}`}>
+              <a
+                href={`/login?redirectTo=${encodeURIComponent(globalThis.location.pathname + globalThis.location.search)}`}
+                data-test-id="cards-login-button"
+              >
                 Zaloguj się
               </a>
             </Button>
@@ -181,15 +184,19 @@ export default function CardsListPage() {
       ) : null}
 
       {view.status === "error" ? (
-        <div className="rounded-lg border bg-background p-4">
+        <div className="rounded-lg border bg-background p-4" data-test-id="cards-error">
           <p className="text-sm">{view.errorMessage}</p>
         </div>
       ) : null}
 
-      {view.status === "loading" ? <p className="text-sm text-muted-foreground">Ładowanie…</p> : null}
+      {view.status === "loading" ? (
+        <p className="text-sm text-muted-foreground" data-test-id="cards-loading">
+          Ładowanie…
+        </p>
+      ) : null}
 
       {view.status === "success" && view.data.data.length === 0 ? (
-        <div className="rounded-lg border bg-background p-6">
+        <div className="rounded-lg border bg-background p-6" data-test-id="cards-empty">
           <p className="text-sm">Brak fiszek do wyświetlenia.</p>
           <div className="mt-3">
             <Button type="button" onClick={onCreateClick}>

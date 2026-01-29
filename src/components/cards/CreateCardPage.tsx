@@ -25,20 +25,22 @@ export default function CreateCardPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-test-id="create-card-page">
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight">Nowa fiszka</h1>
+        <h1 className="text-3xl font-bold tracking-tight" data-test-id="create-card-heading">
+          Nowa fiszka
+        </h1>
         <p className="text-muted-foreground">Utwórz nową fiszkę ręcznie, wpisując treść na obie strony.</p>
       </div>
 
-      <Card>
+      <Card data-test-id="create-card-card">
         <CardHeader>
           <CardTitle>Dane fiszki</CardTitle>
           <CardDescription>Pamiętaj o limitach znaków dla każdej ze stron.</CardDescription>
         </CardHeader>
         <CardContent>
           {error && (
-            <Alert variant="destructive" className="mb-6">
+            <Alert variant="destructive" className="mb-6" data-test-id="create-card-error">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}

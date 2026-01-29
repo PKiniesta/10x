@@ -36,11 +36,12 @@ export function LoginForm() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || "Wystąpił błąd podczas logowania");
+        setError(result.error || "Wystąpił błąd podczas logowania");
+        return;
       }
 
-      window.location.href = "/cards";
-    } catch (err: any) {
+      globalThis.location.href = "/cards";
+    } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Wystąpił błąd podczas logowania");
     } finally {
       setIsLoading(false);
@@ -48,7 +49,7 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="mx-auto w-full max-w-md">
+    <Card className="mx-auto w-full max-w-md" data-test-id="login-card">
       <CardHeader>
         <CardTitle className="text-center text-2xl">Logowanie</CardTitle>
         <CardDescription className="text-center">Wprowadź swoje dane, aby uzyskać dostęp do konta.</CardDescription>
@@ -57,7 +58,7 @@ export function LoginForm() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             {error && (
-              <Alert variant="destructive">
+              <Alert variant="destructive" data-test-id="login-error-message">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
@@ -68,7 +69,7 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="email@example.com" {...field} />
+                    <Input placeholder="email@example.com" {...field} data-test-id="login-email-input" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -81,18 +82,23 @@ export function LoginForm() {
                 <FormItem>
                   <div className="flex items-center justify-between">
                     <FormLabel>Hasło</FormLabel>
-                    <a href="/forgot-password" title="Odzyskaj hasło" className="text-primary text-sm hover:underline">
+                    <a
+                      href="/forgot-password"
+                      title="Odzyskaj hasło"
+                      className="text-primary text-sm hover:underline"
+                      data-test-id="forgot-password-link"
+                    >
                       Zapomniałeś hasła?
                     </a>
                   </div>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input type="password" placeholder="••••••••" {...field} data-test-id="login-password-input" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading} data-test-id="login-submit-button">
               {isLoading ? "Logowanie..." : "Zaloguj się"}
             </Button>
           </form>
@@ -101,7 +107,12 @@ export function LoginForm() {
       <CardFooter className="flex flex-col gap-4">
         <div className="text-sm text-center text-muted-foreground">
           Nie masz jeszcze konta?{" "}
-          <a href="/register" title="Zarejestruj się" className="text-primary hover:underline">
+          <a
+            href="/register"
+            title="Zarejestruj się"
+            className="text-primary hover:underline"
+            data-test-id="register-link"
+          >
             Zarejestruj się
           </a>
         </div>

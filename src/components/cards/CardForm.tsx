@@ -28,7 +28,7 @@ export function CardForm({ onSubmit, isLoading, defaultValues, onCancel }: CardF
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" data-test-id="card-form">
         <FormField
           control={form.control}
           name="front"
@@ -41,7 +41,7 @@ export function CardForm({ onSubmit, isLoading, defaultValues, onCancel }: CardF
                 </span>
               </div>
               <FormControl>
-                <Input placeholder="Wpisz treść na przód fiszki..." {...field} />
+                <Input placeholder="Wpisz treść na przód fiszki..." data-test-id="card-form-front" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -60,7 +60,12 @@ export function CardForm({ onSubmit, isLoading, defaultValues, onCancel }: CardF
                 </span>
               </div>
               <FormControl>
-                <Textarea placeholder="Wpisz treść na tył fiszki..." className="min-h-[120px] resize-none" {...field} />
+                <Textarea
+                  placeholder="Wpisz treść na tył fiszki..."
+                  className="min-h-[120px] resize-none"
+                  data-test-id="card-form-back"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -71,6 +76,7 @@ export function CardForm({ onSubmit, isLoading, defaultValues, onCancel }: CardF
           <Button
             type="button"
             variant="outline"
+            data-test-id="card-form-cancel"
             onClick={() => {
               if (onCancel) {
                 onCancel();
@@ -82,7 +88,7 @@ export function CardForm({ onSubmit, isLoading, defaultValues, onCancel }: CardF
           >
             Anuluj
           </Button>
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading} data-test-id="card-form-submit">
             {isLoading ? "Zapisywanie..." : "Zapisz fiszkę"}
           </Button>
         </div>
