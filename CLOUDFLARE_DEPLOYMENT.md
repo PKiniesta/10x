@@ -1,5 +1,18 @@
 # Deployment na Cloudflare Pages
 
+## Szybkie polecenia
+
+```bash
+# Deploy aplikacji (build + wdrożenie)
+npm run deploy
+
+# Lub krok po kroku:
+npm run build
+wrangler pages deploy dist --project-name=10x
+```
+
+**WAŻNE**: To jest projekt Cloudflare **Pages**, nie Workers. Używaj `wrangler pages deploy`, nie `wrangler deploy`!
+
 ## Wymagania
 
 Przed wdrożeniem upewnij się, że masz:
@@ -98,6 +111,11 @@ Projekt używa `@astrojs/cloudflare` adapter, który:
 - Zweryfikuj `CLOUDFLARE_API_TOKEN` - powinien mieć uprawnienia do Cloudflare Pages
 - Sprawdź czy `CLOUDFLARE_PROJECT_NAME` zgadza się z nazwą w Cloudflare Dashboard
 - Upewnij się, że `CLOUDFLARE_ACCOUNT_ID` jest poprawny
+
+### "Workers-specific command in a Pages project" error
+- **Problem**: Próba użycia `wrangler deploy` zamiast `wrangler pages deploy`
+- **Rozwiązanie**: Użyj `npm run deploy` lub `wrangler pages deploy dist --project-name=10x`
+- Ten projekt to Cloudflare **Pages**, nie Workers - polecenia są inne!
 
 ### Aplikacja nie działa po deploy
 - Sprawdź zmienne środowiskowe w Cloudflare Pages Dashboard
