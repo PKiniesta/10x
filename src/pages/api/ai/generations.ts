@@ -43,7 +43,7 @@ async function readJsonBody(request: Request): Promise<unknown> {
 }
 
 export async function POST(context: APIContext): Promise<Response> {
-  const { user, supabaseAdmin } = context.locals;
+  const { user } = context.locals;
 
   if (!user) {
     return apiError("AUTH_REQUIRED", "Authentication required.", 401);

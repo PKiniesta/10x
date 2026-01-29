@@ -35,6 +35,7 @@ function parseCookieHeader(cookieHeader: string): { name: string; value: string 
 }
 
 export const createSupabaseServerInstance = (context: { headers: Headers; cookies: AstroCookies }) => {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return createServerClient<Database>(supabaseUrl, supabaseAnonKey!, {
     cookieOptions,
     cookies: {

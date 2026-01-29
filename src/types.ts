@@ -213,7 +213,6 @@ export type AcceptAiProposalResponseDto = {
   };
 };
 
-
 // -----------------------------
 // AI generation logs (optional read-only endpoints)
 // -----------------------------

@@ -54,8 +54,6 @@ interface MockSupabaseConfig {
 }
 
 function createChainableBuilder(finalResult: { data?: unknown; error?: unknown; count?: number }) {
-  const builder: Record<string, unknown> = {};
-
   const makeChainable = () => {
     const chainable: Record<string, unknown> = {};
     const methods = ["eq", "neq", "gt", "gte", "lt", "lte", "like", "ilike", "is", "in", "order", "limit", "range"];
@@ -104,9 +102,7 @@ function createMockSupabaseAdmin(overrides: MockSupabaseConfig = {}): SupabaseAd
             }),
           }),
         }),
-        update: vi.fn().mockReturnValue(
-          createChainableBuilder({ error: updateGenerationError })
-        ),
+        update: vi.fn().mockReturnValue(createChainableBuilder({ error: updateGenerationError })),
         select: vi.fn().mockImplementation((_cols: string, opts?: { count?: string; head?: boolean }) => {
           if (opts?.count === "exact" && opts?.head === true) {
             return createChainableBuilder({ count: generationRequestUsed, error: null });

@@ -32,10 +32,7 @@ teardown("cleanup test data", async () => {
 
   console.log(`Cleaning up test data for user: ${testUserId}`);
 
-  const { error: proposalLogsError } = await supabase
-    .from("ai_proposal_logs")
-    .delete()
-    .eq("user_id", testUserId);
+  const { error: proposalLogsError } = await supabase.from("ai_proposal_logs").delete().eq("user_id", testUserId);
 
   if (proposalLogsError) {
     console.error("Failed to delete ai_proposal_logs:", proposalLogsError.message);
@@ -43,10 +40,7 @@ teardown("cleanup test data", async () => {
     console.log("Deleted ai_proposal_logs for test user");
   }
 
-  const { error: cardsError } = await supabase
-    .from("cards")
-    .delete()
-    .eq("user_id", testUserId);
+  const { error: cardsError } = await supabase.from("cards").delete().eq("user_id", testUserId);
 
   if (cardsError) {
     console.error("Failed to delete cards:", cardsError.message);
@@ -54,10 +48,7 @@ teardown("cleanup test data", async () => {
     console.log("Deleted cards for test user");
   }
 
-  const { error: generationsError } = await supabase
-    .from("ai_generation_requests")
-    .delete()
-    .eq("user_id", testUserId);
+  const { error: generationsError } = await supabase.from("ai_generation_requests").delete().eq("user_id", testUserId);
 
   if (generationsError) {
     console.error("Failed to delete ai_generation_requests:", generationsError.message);

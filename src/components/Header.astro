@@ -14,7 +14,11 @@ const { user } = Astro.locals;
             <a href="/cards" class="transition-colors hover:text-primary" data-test-id="header-link-cards-list">
               Lista fiszek
             </a>
-            <a href="/cards/new" class="transition-colors hover:text-primary" data-test-id="header-link-generate-manual">
+            <a
+              href="/cards/new"
+              class="transition-colors hover:text-primary"
+              data-test-id="header-link-generate-manual"
+            >
               Generuj manualnie
             </a>
           </>
@@ -38,7 +42,9 @@ const { user } = Astro.locals;
           </>
         ) : (
           <div class="flex items-center gap-4">
-            <span class="text-muted-foreground hidden text-sm sm:inline" data-test-id="header-user-email">{user.email}</span>
+            <span class="text-muted-foreground hidden text-sm sm:inline" data-test-id="header-user-email">
+              {user.email}
+            </span>
             <button
               id="logout-button"
               class="text-sm font-medium transition-colors hover:text-destructive"
@@ -68,6 +74,7 @@ const { user } = Astro.locals;
         }
       } catch (error) {
         console.error("Logout failed:", error);
+        // eslint-disable-next-line prettier/prettier
       }
     });
   }

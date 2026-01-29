@@ -7,6 +7,7 @@ describe("cn utility", () => {
   });
 
   it("should handle conditional classes", () => {
+    // eslint-disable-next-line no-constant-binary-expression
     expect(cn("p-4", true && "m-2", false && "bg-red-500")).toBe("p-4 m-2");
   });
 });

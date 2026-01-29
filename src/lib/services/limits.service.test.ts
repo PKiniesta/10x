@@ -58,11 +58,11 @@ describe("limits.service", () => {
 
   it("should handle error from supabase", async () => {
     vi.mocked(mockSupabaseAdmin.from).mockImplementation(() => {
-        return {
-            select: vi.fn().mockReturnThis(),
-            eq: vi.fn().mockReturnThis(),
-            gte: vi.fn().mockResolvedValue({ count: null, error: { message: "DB Error", code: "500" } }),
-        } as any;
+      return {
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        gte: vi.fn().mockResolvedValue({ count: null, error: { message: "DB Error", code: "500" } }),
+      } as any;
     });
 
     await expect(
