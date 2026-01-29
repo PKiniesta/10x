@@ -31,8 +31,21 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
+      name: "setup",
+      testMatch: /.*\.setup\.ts/,
+      teardown: "cleanup",
+    },
+    {
+      name: "cleanup",
+      testMatch: /.*\.teardown\.ts/,
+    },
+    {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "tests/e2e/.auth/user.json",
+      },
+      dependencies: ["setup"],
     },
   ],
 

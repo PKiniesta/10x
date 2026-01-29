@@ -48,17 +48,22 @@ export class CreateCardPagePom {
   }
 
   async waitForLoaded(): Promise<void> {
+    await this.page.waitForLoadState("networkidle");
     await expect(this.root).toBeVisible();
     await expect(this.heading).toBeVisible();
     await expect(this.form).toBeVisible();
   }
 
   async fillFront(value: string): Promise<void> {
-    await this.frontInput.fill(value);
+    await this.frontInput.click();
+    await this.frontInput.clear();
+    await this.frontInput.pressSequentially(value, { delay: 30 });
   }
 
   async fillBack(value: string): Promise<void> {
-    await this.backTextarea.fill(value);
+    await this.backTextarea.click();
+    await this.backTextarea.clear();
+    await this.backTextarea.pressSequentially(value, { delay: 30 });
   }
 
   async submit(): Promise<void> {

@@ -5,5 +5,5 @@ test("homepage has title", async ({ page }) => {
 
   // Expect a title "to contain" a substring.
   // Note: Update this to match your actual page title or content
-  await expect(page).toHaveTitle(/Astro/i);
+  await expect(page).toHaveTitle(/Fiszki/i);
 });
