@@ -3,41 +3,25 @@ name: Build and Test
 on:
   push:
     branches: [ main ]
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   build:
+    name: Build Application
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-
-      - name: Install dependencies
-        run: npm ci
-
+      - name: Setup
+        uses: ./.github/actions/setup
       - name: Run build
         run: npm run build
 
   test:
+    name: Unit Tests
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-
-      - name: Install dependencies
-        run: npm ci
-
+      - name: Setup
+        uses: ./.github/actions/setup
       - name: Run test
         run: npm run test
 

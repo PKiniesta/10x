@@ -1,0 +1,14 @@
+name = "10x-cards"
+compatibility_date = "2026-01-29"
+pages_build_output_dir = "dist"
+
+[env.production]
+name = "10x-cards-production"
+
+[env.production.vars]
+# Environment variables will be set via Cloudflare dashboard or GitHub Secrets
+# SUPABASE_URL = ""
+# SUPABASE_ANON_KEY = ""
+# SUPABASE_SERVICE_ROLE_KEY = ""
+# OPENROUTER_API_KEY = ""
+# OPENROUTER_MODEL = ""

@@ -30,7 +30,8 @@ The key value proposition includes:
 
 - **CI/CD and Hosting**:
   - Github Actions for creating CI/CD pipelines
-  - DigitalOcean for hosting the application via Docker image
+  - Cloudflare Pages for hosting the application with automatic deployments
+  - Astro with Cloudflare adapter for optimized SSR on Cloudflare's edge network
 
 - **Testing**:
   - **Vitest** for unit and integration testing of services, validation, and helpers
@@ -65,12 +66,20 @@ The key value proposition includes:
 ## Available Scripts
 
 - `npm run dev` - Start the development server
-- `npm run build` - Build the project for production
+- `npm run build` - Build the project for production (Cloudflare Pages)
 - `npm run preview` - Preview the production build locally
 - `npm run astro` - Run Astro CLI commands
 - `npm run lint` - Run ESLint for code linting
 - `npm run lint:fix` - Run ESLint with auto-fix
 - `npm run format` - Format code using Prettier
+- `npm run test` - Run unit tests
+- `npm run test:watch` - Run unit tests in watch mode
+- `npm run test:coverage` - Run unit tests with coverage report
+- `npm run test:e2e` - Run end-to-end tests with Playwright
+
+## Deployment
+
+The application is automatically deployed to Cloudflare Pages when changes are pushed to the `main` branch. For detailed deployment instructions and configuration, see [CLOUDFLARE_DEPLOYMENT.md](./CLOUDFLARE_DEPLOYMENT.md).
 
 ## Project Scope
 

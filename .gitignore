@@ -28,3 +28,8 @@ tests/e2e/.auth/
 # jetbrains setting folder
 .idea/
 .env.test
+
+# Cloudflare
+.wrangler/
+.dev.vars
+wrangler.toml.local
