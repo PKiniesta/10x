@@ -11,8 +11,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc
-          cache: 'npm'
+          node-version: 22.17.1
       - name: Run Lint
         run: npm run lint
 
@@ -24,7 +23,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc
+          node-version: 22.17.1
       - name: Run Unit Tests with Coverage
         run: npm run test:coverage
       - name: Upload Unit Test Coverage
@@ -49,7 +48,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc
+          node-version: 22.17.1
       - name: Build for Cloudflare
         run: npm run build
       - name: Upload Build Artifact
