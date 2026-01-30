@@ -9,6 +9,8 @@ The key value proposition includes:
 - Users approve individual suggestions (with editing option), allowing the flashcard database to grow quickly while maintaining quality.
 - The MVP focuses on fast creation and management of flashcards; integration with repetitions (SM-2) will be added in the next phase.
 TEST
+### PRD
+ Prd is under [doc/prd](doc/prd.md)
 ## Tech Stack
 
 - **Frontend**: Astro 5 with React for interactive components
