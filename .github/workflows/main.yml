@@ -73,12 +73,11 @@ jobs:
 
       - name: Deploy to Cloudflare Pages
         id: deployment
-        uses: cloudflare/pages-action@v1
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: 10x
-          directory: dist
+          command: pages deploy dist --project-name=10x
 
   status-comment:
     name: Deployment Status
