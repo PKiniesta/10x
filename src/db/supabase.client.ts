@@ -49,11 +49,66 @@ export const cookieOptions: CookieOptionsWithName = {
   sameSite: "lax",
 };
 
+function normalizeCookieOptions(options: Record<string, unknown> | undefined): Record<string, unknown> | undefined {
+  if (!options) {
+    return options;
+  }
+
+  const normalized: Record<string, unknown> = { ...options };
+
+  const expires = normalized.expires;
+  if (typeof expires === "string") {
+    const d = new Date(expires);
+    if (Number.isNaN(d.getTime())) {
+      delete normalized.expires;
+    } else {
+      normalized.expires = d;
+    }
+  }
+
+  const maxAge = normalized.maxAge;
+  if (maxAge !== undefined && typeof maxAge !== "number") {
+    const n = Number(maxAge);
+    if (Number.isFinite(n)) {
+      normalized.maxAge = n;
+    } else {
+      delete normalized.maxAge;
+    }
+  }
+
+  const sameSite = normalized.sameSite;
+  if (typeof sameSite === "string") {
+    const v = sameSite.toLowerCase();
+    if (v === "lax" || v === "strict" || v === "none") {
+      normalized.sameSite = v;
+    } else {
+      delete normalized.sameSite;
+    }
+  }
+
+  if (normalized.path === "") {
+    delete normalized.path;
+  }
+
+  if (normalized.domain === "") {
+    delete normalized.domain;
+  }
+
+  return normalized;
+}
+
 function parseCookieHeader(cookieHeader: string): { name: string; value: string }[] {
-  return cookieHeader.split(";").map((cookie) => {
-    const [name, ...rest] = cookie.trim().split("=");
-    return { name, value: rest.join("=") };
-  });
+  if (!cookieHeader.trim()) {
+    return [];
+  }
+
+  return cookieHeader
+    .split(";")
+    .map((cookie) => {
+      const [name, ...rest] = cookie.trim().split("=");
+      return { name, value: rest.join("=") };
+    })
+    .filter(({ name }) => Boolean(name));
 }
 
 export const createSupabaseServerInstance = (context: { headers: Headers; cookies: AstroCookies }) => {
@@ -76,7 +131,21 @@ export const createSupabaseServerInstance = (context: { headers: Headers; cookie
         return parseCookieHeader(context.headers.get("Cookie") ?? "");
       },
       setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) => context.cookies.set(name, value, options));
+        cookiesToSet.forEach(({ name, value, options }) => {
+          try {
+            context.cookies.set(name, value, normalizeCookieOptions(options));
+          } catch (err) {
+            // eslint-disable-next-line no-console
+            console.error("Failed to set Supabase auth cookie", {
+              name,
+              valueLength: value.length,
+              options,
+              normalizedOptions: normalizeCookieOptions(options),
+              error: err instanceof Error ? err.message : String(err),
+            });
+            throw err;
+          }
+        });
       },
     },
   });
