@@ -33,6 +33,7 @@ jobs:
     name: Build Application
     needs: lint
     runs-on: ubuntu-latest
+    environment: production
     env:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
