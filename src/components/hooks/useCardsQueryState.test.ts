@@ -49,16 +49,8 @@ describe("useCardsQueryState", () => {
       result.current.setQuery({ page: 3, q: "new search" });
     });
 
-    expect(window.history.pushState).toHaveBeenCalledWith(
-      null,
-      "",
-      expect.stringContaining("page=3")
-    );
-    expect(window.history.pushState).toHaveBeenCalledWith(
-      null,
-      "",
-      expect.stringContaining("q=new+search")
-    );
+    expect(window.history.pushState).toHaveBeenCalledWith(null, "", expect.stringContaining("page=3"));
+    expect(window.history.pushState).toHaveBeenCalledWith(null, "", expect.stringContaining("q=new+search"));
     expect(result.current.state.page).toBe(3);
     expect(result.current.state.q).toBe("new search");
   });
@@ -70,10 +62,6 @@ describe("useCardsQueryState", () => {
       result.current.setQuery({ page: 5 }, { replace: true });
     });
 
-    expect(window.history.replaceState).toHaveBeenCalledWith(
-      null,
-      "",
-      expect.stringContaining("page=5")
-    );
+    expect(window.history.replaceState).toHaveBeenCalledWith(null, "", expect.stringContaining("page=5"));
   });
 });

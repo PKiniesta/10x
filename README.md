@@ -8,7 +8,7 @@ The key value proposition includes:
 - Users paste text in Polish, and AI suggests flashcards in question/answer format (front/back).
 - Users approve individual suggestions (with editing option), allowing the flashcard database to grow quickly while maintaining quality.
 - The MVP focuses on fast creation and management of flashcards; integration with repetitions (SM-2) will be added in the next phase.
-
+TEST
 ## Tech Stack
 
 - **Frontend**: Astro 5 with React for interactive components

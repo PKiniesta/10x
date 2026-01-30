@@ -7,9 +7,6 @@ interface Props {
 }
 
 const { title = "10x Astro Starter" } = Astro.props;
-
-// Placeholder for user presence - logic will be added later
-const user = null;
 ---
 
 <!doctype html>
@@ -22,6 +19,7 @@ const user = null;
     <title>{title}</title>
     <script is:inline>
       const getThemePreference = () => {
+        // eslint-disable-next-line prettier/prettier
         if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
           return localStorage.getItem("theme");
         }

@@ -32,7 +32,7 @@ describe("DELETE /api/cards/[cardId] Integration", () => {
       const body = await response.json();
       res.writeHead(response.status, { "Content-Type": "application/json" });
       res.end(JSON.stringify(body));
-    } catch (err) {
+    } catch (_err) {
       res.writeHead(500, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ error: { code: "INTERNAL_ERROR", message: "Internal Server Error" } }));
     }
