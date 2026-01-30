@@ -78,16 +78,11 @@ jobs:
           echo "Contents of dist/:"
           ls -la dist/
 
-      - run: npx wrangler whoami
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-
       - name: Deploy to Cloudflare Pages
         id: deployment
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy ./dist --project-name=10x
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           packageManager: npm
