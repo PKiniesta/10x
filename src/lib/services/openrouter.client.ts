@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { getSecret } from "astro:env/server";
 
 const provider = "openrouter" as const;
 
@@ -21,7 +22,7 @@ type OpenRouterChatCompletionResponse = {
 };
 
 function getApiKey(): string {
-  const key = import.meta.env.OPENROUTER_API_KEY;
+  const key = getSecret("OPENROUTER_API_KEY") ?? import.meta.env.OPENROUTER_API_KEY;
   if (!key) {
     throw new Error("Missing OPENROUTER_API_KEY env var");
   }
@@ -78,7 +79,8 @@ export async function generateProposalsWithOpenRouter(args: {
 
   const apiKey = getApiKey();
 
-  const model = import.meta.env.OPENROUTER_MODEL ?? "arcee-ai/trinity-large-preview:free";
+  const model =
+    getSecret("OPENROUTER_MODEL") ?? import.meta.env.OPENROUTER_MODEL ?? "arcee-ai/trinity-large-preview:free";
 
   const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
