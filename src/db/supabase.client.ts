@@ -31,6 +31,7 @@ function normalizeEnvVar(value: string | undefined | null): string | undefined {
     return undefined;
   }
 
+  // eslint-disable-next-line no-control-regex
   if (/[\u0000-\u001F\u007F]/.test(unquoted)) {
     return undefined;
   }
