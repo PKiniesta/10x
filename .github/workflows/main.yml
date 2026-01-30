@@ -78,6 +78,10 @@ jobs:
           echo "Contents of dist/:"
           ls -la dist/
 
+      - run: npx wrangler whoami
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
       - name: Deploy to Cloudflare Pages
         id: deployment
         uses: cloudflare/wrangler-action@v3
