@@ -57,6 +57,18 @@ function readSupabaseAnonKey(): string | undefined {
 
   const normalized = normalizeEnvVar(raw);
   if (!normalized && raw) {
+    const debugInfo = {
+      length: raw.length,
+      hasWhitespace: /\s/.test(raw),
+      // eslint-disable-next-line no-control-regex
+      hasControlChars: /[\u0000-\u001F\u007F]/.test(raw),
+      startsWithQuote: raw.startsWith('"') || raw.startsWith("'"),
+      endsWithQuote: raw.endsWith('"') || raw.endsWith("'"),
+      first10: raw.slice(0, 10),
+      last10: raw.slice(-10),
+    };
+    // eslint-disable-next-line no-console
+    console.error("Invalid SUPABASE_ANON_KEY env var:", JSON.stringify(debugInfo));
     throw new Error("Invalid SUPABASE_ANON_KEY env var");
   }
   return normalized;
