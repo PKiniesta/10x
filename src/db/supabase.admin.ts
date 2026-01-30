@@ -47,7 +47,7 @@ function normalizeEnvVar(value: string | undefined | null): string | undefined {
 export function createSupabaseAdminClient(): SupabaseAdminClient {
   const supabaseUrl = normalizeEnvVar(getSecret("SUPABASE_URL") ?? import.meta.env.SUPABASE_URL);
   const supabaseServiceRoleKey = normalizeEnvVar(
-    getSecret("SUPABASE_SERVICE_ROLE_KEY") ?? import.meta.env.SUPABASE_SERVICE_ROLE_KEY,
+    getSecret("SUPABASE_SERVICE_ROLE_KEY") ?? import.meta.env.SUPABASE_SERVICE_ROLE_KEY
   );
 
   if (!supabaseUrl) {
