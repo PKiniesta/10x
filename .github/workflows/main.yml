@@ -8,8 +8,10 @@ jobs:
     name: Lint Code
     runs-on: ubuntu-latest
     steps:
-      - name: Setup
-        uses: ./.github/actions/setup
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
       - name: Run Lint
         run: npm run lint
 
@@ -18,8 +20,10 @@ jobs:
     needs: lint
     runs-on: ubuntu-latest
     steps:
-      - name: Setup
-        uses: ./.github/actions/setup
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
       - name: Run Unit Tests with Coverage
         run: npm run test:coverage
       - name: Upload Unit Test Coverage
@@ -41,8 +45,10 @@ jobs:
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       OPENROUTER_MODEL: ${{ secrets.OPENROUTER_MODEL }}
     steps:
-      - name: Setup
-        uses: ./.github/actions/setup
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
       - name: Build for Cloudflare
         run: npm run build
       - name: Upload Build Artifact
