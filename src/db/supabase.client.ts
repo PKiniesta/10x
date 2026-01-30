@@ -49,52 +49,72 @@ export const cookieOptions: CookieOptionsWithName = {
   sameSite: "lax",
 };
 
-function normalizeCookieOptions(options: Record<string, unknown> | undefined): Record<string, unknown> | undefined {
+type AstroCookieSetOptions = NonNullable<Parameters<AstroCookies["set"]>[2]>;
+
+function normalizeCookieOptions(options: Record<string, unknown> | undefined): AstroCookieSetOptions | undefined {
   if (!options) {
-    return options;
+    return undefined;
   }
 
-  const normalized: Record<string, unknown> = { ...options };
+  const normalized: Record<string, unknown> = {};
 
-  const expires = normalized.expires;
+  const path = options.path;
+  if (typeof path === "string" && path.trim()) {
+    normalized.path = path;
+  }
+
+  const domain = options.domain;
+  if (typeof domain === "string" && domain.trim()) {
+    normalized.domain = domain;
+  }
+
+  const httpOnly = options.httpOnly;
+  if (typeof httpOnly === "boolean") {
+    normalized.httpOnly = httpOnly;
+  }
+
+  const secure = options.secure;
+  if (typeof secure === "boolean") {
+    normalized.secure = secure;
+  }
+
+  const expires = options.expires;
   if (typeof expires === "string") {
     const d = new Date(expires);
-    if (Number.isNaN(d.getTime())) {
-      delete normalized.expires;
-    } else {
+    if (!Number.isNaN(d.getTime())) {
       normalized.expires = d;
+    }
+  } else if (expires instanceof Date) {
+    if (!Number.isNaN(expires.getTime())) {
+      normalized.expires = expires;
     }
   }
 
-  const maxAge = normalized.maxAge;
-  if (maxAge !== undefined && typeof maxAge !== "number") {
+  const maxAge = options.maxAge;
+  if (typeof maxAge === "number") {
+    if (Number.isFinite(maxAge)) {
+      normalized.maxAge = maxAge;
+    }
+  } else if (maxAge !== undefined) {
     const n = Number(maxAge);
     if (Number.isFinite(n)) {
       normalized.maxAge = n;
-    } else {
-      delete normalized.maxAge;
     }
   }
 
-  const sameSite = normalized.sameSite;
+  const sameSite = options.sameSite;
   if (typeof sameSite === "string") {
     const v = sameSite.toLowerCase();
     if (v === "lax" || v === "strict" || v === "none") {
       normalized.sameSite = v;
-    } else {
-      delete normalized.sameSite;
     }
   }
 
-  if (normalized.path === "") {
-    delete normalized.path;
+  if (!Object.keys(normalized).length) {
+    return undefined;
   }
 
-  if (normalized.domain === "") {
-    delete normalized.domain;
-  }
-
-  return normalized;
+  return normalized as AstroCookieSetOptions;
 }
 
 function parseCookieHeader(cookieHeader: string): { name: string; value: string }[] {
