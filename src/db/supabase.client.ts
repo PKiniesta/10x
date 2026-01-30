@@ -7,17 +7,58 @@ import type { Database } from "./database.types.ts";
 
 export type SupabaseClient = ReturnType<typeof createClient<Database>>;
 
+function normalizeEnvVar(value: string | undefined | null): string | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return undefined;
+  }
+
+  const unquoted =
+    (trimmed.startsWith('"') && trimmed.endsWith('"') && trimmed.length >= 2) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'") && trimmed.length >= 2)
+      ? trimmed.slice(1, -1).trim()
+      : trimmed;
+
+  if (!unquoted) {
+    return undefined;
+  }
+
+  if (/\s/.test(unquoted)) {
+    return undefined;
+  }
+
+  if (/[\u0000-\u001F\u007F]/.test(unquoted)) {
+    return undefined;
+  }
+
+  return unquoted;
+}
+
 function readSupabaseUrl(): string | undefined {
-  return getSecret("SUPABASE_URL") ?? import.meta.env.SUPABASE_URL;
+  const raw = getSecret("SUPABASE_URL") ?? import.meta.env.SUPABASE_URL;
+  const normalized = normalizeEnvVar(raw);
+  if (!normalized && raw) {
+    throw new Error("Invalid SUPABASE_URL env var");
+  }
+  return normalized;
 }
 
 function readSupabaseAnonKey(): string | undefined {
-  return (
+  const raw =
     getSecret("SUPABASE_ANON_KEY") ??
     getSecret("SUPABASE_KEY") ??
     import.meta.env.SUPABASE_ANON_KEY ??
-    import.meta.env.SUPABASE_KEY
-  );
+    import.meta.env.SUPABASE_KEY;
+
+  const normalized = normalizeEnvVar(raw);
+  if (!normalized && raw) {
+    throw new Error("Invalid SUPABASE_ANON_KEY env var");
+  }
+  return normalized;
 }
 
 let cachedSupabaseClient: SupabaseClient | null = null;
