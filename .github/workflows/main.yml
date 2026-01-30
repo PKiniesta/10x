@@ -71,14 +71,21 @@ jobs:
           name: dist
           path: dist/
 
+      - name: List dist contents
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Contents of dist/:"
+          ls -la dist/
+
       - name: Deploy to Cloudflare Pages
         id: deployment
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=10x
+          command: pages deploy ./dist --project-name=10x
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          packageManager: npm
 
   status-comment:
     name: Deployment Status
