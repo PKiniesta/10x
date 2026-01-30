@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { getSecret } from "astro:env/server";
 
 import type { Database } from "./database.types";
 
@@ -9,12 +10,12 @@ import type { Database } from "./database.types";
  * - This client must use the Service Role key to bypass RLS for server-side writes.
  * - Do not fall back to anon/public keys here; that can silently break endpoints.
  */
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-const supabaseServiceRoleKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
-
 export type SupabaseAdminClient = ReturnType<typeof createClient<Database>>;
 
 export function createSupabaseAdminClient(): SupabaseAdminClient {
+  const supabaseUrl = getSecret("SUPABASE_URL") ?? import.meta.env.SUPABASE_URL;
+  const supabaseServiceRoleKey = getSecret("SUPABASE_SERVICE_ROLE_KEY") ?? import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
+
   if (!supabaseUrl) {
     throw new Error("Missing SUPABASE_URL env var");
   }

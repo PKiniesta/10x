@@ -1,24 +1,46 @@
 import { createClient } from "@supabase/supabase-js";
 import { createServerClient, type CookieOptionsWithName } from "@supabase/ssr";
 import type { AstroCookies } from "astro";
+import { getSecret } from "astro:env/server";
 
 import type { Database } from "./database.types.ts";
 
-const supabaseUrl = import.meta.env.SUPABASE_URL;
-// This client is intended for anon/public usage.
-const supabaseAnonKey = import.meta.env.SUPABASE_ANON_KEY ?? import.meta.env.SUPABASE_KEY;
-
-if (!supabaseUrl) {
-  throw new Error("Missing SUPABASE_URL env var");
-}
-
-if (!supabaseAnonKey) {
-  throw new Error("Missing SUPABASE_ANON_KEY env var");
-}
-
 export type SupabaseClient = ReturnType<typeof createClient<Database>>;
 
-export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
+function readSupabaseUrl(): string | undefined {
+  return getSecret("SUPABASE_URL") ?? import.meta.env.SUPABASE_URL;
+}
+
+function readSupabaseAnonKey(): string | undefined {
+  return (
+    getSecret("SUPABASE_ANON_KEY") ??
+    getSecret("SUPABASE_KEY") ??
+    import.meta.env.SUPABASE_ANON_KEY ??
+    import.meta.env.SUPABASE_KEY
+  );
+}
+
+let cachedSupabaseClient: SupabaseClient | null = null;
+
+export function getSupabaseClient(): SupabaseClient {
+  if (cachedSupabaseClient) {
+    return cachedSupabaseClient;
+  }
+
+  const supabaseUrl = readSupabaseUrl();
+  const supabaseAnonKey = readSupabaseAnonKey();
+
+  if (!supabaseUrl) {
+    throw new Error("Missing SUPABASE_URL env var");
+  }
+
+  if (!supabaseAnonKey) {
+    throw new Error("Missing SUPABASE_ANON_KEY env var");
+  }
+
+  cachedSupabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey);
+  return cachedSupabaseClient;
+}
 
 export const cookieOptions: CookieOptionsWithName = {
   path: "/",
@@ -35,6 +57,17 @@ function parseCookieHeader(cookieHeader: string): { name: string; value: string 
 }
 
 export const createSupabaseServerInstance = (context: { headers: Headers; cookies: AstroCookies }) => {
+  const supabaseUrl = readSupabaseUrl();
+  const supabaseAnonKey = readSupabaseAnonKey();
+
+  if (!supabaseUrl) {
+    throw new Error("Missing SUPABASE_URL env var");
+  }
+
+  if (!supabaseAnonKey) {
+    throw new Error("Missing SUPABASE_ANON_KEY env var");
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return createServerClient<Database>(supabaseUrl, supabaseAnonKey!, {
     cookieOptions,
