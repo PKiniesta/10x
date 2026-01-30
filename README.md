@@ -41,7 +41,7 @@ The key value proposition includes:
 ## Getting Started Locally
 
 ### Prerequisites
-- Node.js version 22.17.1 (use `.nvmrc` for version management)
+- Node.js version  22.17.1 (use `.nvmrc` for version management)
 - npm or yarn
 
 ### Installation
